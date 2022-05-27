@@ -1,26 +1,111 @@
 require('dotenv').config()
-const { Client, Intents } = require('discord.js');
-
+const { Client, Intents, MessageSelectMenu, MessageActionRow} = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const { GenshinKit, util } = require('@genshin-kit/core');
+const genshin = new GenshinKit()
 
+genshin.loginWithCookie(process.env.COOKIE).setServerType('os').setServerLocale('fr-fr')
 
 client.once('ready', () => {
     console.log('Gazette on !');
 });
 
+/**
+ * COMMAND INTERACTION
+ */
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
     const { commandName } = interaction;
 
-    if (commandName === 'ping') {
-        await interaction.reply('id de l\'avatar : ' + interaction.user.avatar + '\nNom du channel : ' + interaction.channel.name)
-    } else if (commandName === 'server') {
-        await interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`);
-    } else if (commandName === 'user') {
-        await interaction.reply('User info.');
+    switch (commandName) {
+        case 'uid' :
+            let errors = [];
+            if (interaction.options._hoistedOptions.length > 1) {
+                errors.push('Veuillez n\'entrer qu\'un uid')
+            }
+            // return error - invalid value (empty or null)
+            if (!interaction.options._hoistedOptions[0].value) {
+                errors.push('Uid invalide')
+            }
+
+            if (errors.length > 0) {
+                let response = '';
+                errors.forEach(err => {
+                    response += err + '\n';
+                })
+                await interaction.reply({content: response, ephemeral: true})
+            } else {
+                let uid = interaction.options._hoistedOptions[0].value
+                let response = '';
+                await genshin.getAllCharacters(uid).then(function (result) {
+                    for (const [key, value] of Object.entries(result)) {
+                        if (value.id) {
+                            let { name } = value
+                            response += name + '\n'
+                        }
+                    }
+                })
+                    .catch(function (error) {
+                        response = error.message
+                        console.log(error)
+                    })
+
+                if (!response) {
+                    response = 'Pas de personnages sur la vitrine de l\'utilisateur'
+                }
+
+                await interaction.reply({content: response, ephemeral: true})
+            }
+            break;
+        case 'test' :
+            const row = new MessageActionRow()
+                .addComponents(
+                    new MessageSelectMenu()
+                        .setCustomId('select')
+                        .setPlaceholder('Nothing selected')
+                        .addOptions([
+                            {
+                                label: 'Je réponds oui',
+                                description: 'Ce bot vous répondra positivement',
+                                value: 'yes',
+                            },
+                            {
+                                label: 'Je réponds non',
+                                description: 'Ce bot vous répondra négativement',
+                                value: 'no',
+                            },
+                        ]),
+                );
+
+            await interaction.reply({ content: 'Oui ou Non', components: [row], ephemeral: true});
+            break;
+        case 'boop' :
+            await interaction.reply({content: `<@${interaction.user.id}>, je t'ai mentionné ! ahaha ... ahah ... ah?* <:genshin_tombaie:974255896513359892>`, ephemeral: true})
+            break;
     }
 });
+
+
+/**
+ * SELECT MENU INTERACTION
+ */
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isSelectMenu()) return;
+
+    // If the user used the select menu
+    if (interaction.customId === 'select') {
+        // Always the first value
+        switch (interaction.values[0]) {
+            case 'yes':
+                await interaction.update(`<@${interaction.user.id}> oui`)
+                break
+            case 'no' :
+                await interaction.update({content:`<@${interaction.user.id}> non`, ephemeral: true})
+                break
+        }
+    }
+})
 
 client.login(process.env.TOKEN);
 

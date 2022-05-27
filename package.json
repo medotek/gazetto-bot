@@ -2,6 +2,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.13.0",
     "@discordjs/rest": "^0.4.1",
+    "@genshin-kit/core": "^2.6.2",
     "canvas": "^2.9.1",
     "discord-api-types": "^0.33.0",
     "discord-button-pages": "^1.1.9",
