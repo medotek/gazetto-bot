@@ -15,11 +15,12 @@ client.once('ready', () => {
  */
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
-
     const { commandName } = interaction;
-
     switch (commandName) {
-        case 'uid' :
+        case 'set-uid':
+            // TODO enregistrer les données
+            break;
+        case 'get-uid' :
             let errors = [];
             if (interaction.options._hoistedOptions.length > 1) {
                 errors.push('Veuillez n\'entrer qu\'un uid')
@@ -36,26 +37,64 @@ client.on('interactionCreate', async interaction => {
                 })
                 await interaction.reply({content: response, ephemeral: true})
             } else {
-                let uid = interaction.options._hoistedOptions[0].value
-                let response = '';
-                await genshin.getAllCharacters(uid).then(function (result) {
-                    for (const [key, value] of Object.entries(result)) {
-                        if (value.id) {
-                            let { name } = value
-                            response += name + '\n'
+                let uid = parseInt(interaction.options._hoistedOptions[0].value)
+                let response = 'test';
+                let embed = {
+                    "title": "title ~~(did you know you can have markdown here too?)~~",
+                    "description": "this supports [named links](https://discordapp.com) on top of the previously shown subset of markdown. ```\nyes, even code blocks```",
+                    "url": "https://discordapp.com",
+                    "color": 1753330,
+                    "timestamp": "2022-06-20T21:15:43.123Z",
+                    "footer": {
+                        "icon_url": "https://cdn.discordapp.com/embed/avatars/0.png",
+                        "text": "footer text"
+                    },
+                    "thumbnail": {
+                        "url": "https://cdn.discordapp.com/embed/avatars/0.png"
+                    },
+                    "image": {
+                        "url": "https://cdn.discordapp.com/embed/avatars/0.png"
+                    },
+                    "author": {
+                        "name": "author name",
+                        "url": "https://discordapp.com",
+                        "icon_url": "https://cdn.discordapp.com/embed/avatars/0.png"
+                    },
+                    "fields": [
+                        {
+                            "name": "🤔",
+                            "value": "some of these properties have certain limits..."
                         }
-                    }
-                })
-                    .catch(function (error) {
-                        response = error.message
-                        console.log(error)
-                    })
-
-                if (!response) {
-                    response = 'Pas de personnages sur la vitrine de l\'utilisateur'
+                    ]
                 }
-
-                await interaction.reply({content: response, ephemeral: true})
+                // TODO : Afficher l'uid, le pseudo et un lien vers enka,
+                // TODO : + (facultatif) récupérer l'image de l'utilisateur
+                // ->
+                // let hasError = false;
+                // await genshin.getUserRoles(uid)
+                //     .then(function (result) {
+                //         for (const [key, value] of Object.entries(result)) {
+                //             console.log(value)
+                //             if (value.id) {
+                //                 let { name } = value
+                //                 response += name + '\n'
+                //             }
+                //         }
+                // })
+                //     .catch(function (error) {
+                //         hasError = true
+                //         response = error
+                //         console.log(error)
+                //     })
+                //
+                // if (response.code === 1009) {
+                //     response = 'UID inconnu'
+                // } else if (hasError) {
+                //     response = 'Pas de personnages sur la vitrine de l\'utilisateur'
+                // }
+                console.log(interaction.user);
+                // LIEN de l'image : `https://cdn.discordapp.com/avatars/{user.id}/{user.avatar}.jpg`
+                await interaction.reply({content: response, ephemeral: false, embeds: [embed]})
             }
             break;
         case 'test' :
