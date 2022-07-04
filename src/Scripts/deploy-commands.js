@@ -5,8 +5,8 @@ require('dotenv').config()
 
 const commands = [
     new SlashCommandBuilder().setName('get-uid').setDescription('Affiche les personnages vitrines de l\'utilisateur')
-        .addIntegerOption((option) =>
-            option.setName('uid').setDescription('Donner l\'uid de l\'utilisateur genshin').setRequired(true),
+        .addUserOption((option) =>
+            option.setName('user').setDescription("Choissez l'utilisateur discord pour afficher son uid").setRequired(true),
         ),
     new SlashCommandBuilder().setName('set-uid').setDescription('Enregistre ton uid')
         .addIntegerOption((option) =>
