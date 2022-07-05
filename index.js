@@ -7,7 +7,10 @@ const genshin = new GenshinKit()
 // DB connection
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PWD, {
     host: process.env.DB_HOST,
-    dialect: 'mysql'
+    dialect: 'mysql',
+    dialectOptions: {
+        connectTimeout:100000
+    }
 });
 // Import commands
 const Commands = require('./src/Components/commands')
