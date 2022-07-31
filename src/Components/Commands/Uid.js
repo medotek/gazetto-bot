@@ -25,7 +25,7 @@ module.exports = async (sequelize, commandName, interaction) => {
      */
     if (commandName === 'get-uid') {
         let ephemeralStatus = true;
-        // TODO : get userId from arguments
+        let replyObject = {}
         let targetUser = interaction.options._hoistedOptions[0]
         response = await UserDataProvider('read', sequelize, targetUser.user)
         // Get data from database
@@ -61,8 +61,10 @@ module.exports = async (sequelize, commandName, interaction) => {
                 ]
             }
         }
+
+        replyObject.message = response.message
         if (response.status !== 'error') ephemeralStatus = false;
-        let replyObject = {content: response.message, ephemeral: ephemeralStatus}
+        replyObject.ephemeral = ephemeralStatus
         if (embed) replyObject.embeds = [embed]
         await interaction.reply(replyObject)
     }

@@ -1,6 +1,6 @@
 const User = require('../Models/User')
 
-module.exports = async (crudAction, sequelize, user, uuid = undefined, name = undefined) => {
+module.exports = async (crudAction, sequelize, discordUser, uuid = undefined, name = undefined) => {
     if ((!name && crudAction !== 'read')
         || (!uuid && crudAction !== 'read')
         || !crudAction) {
@@ -26,7 +26,7 @@ module.exports = async (crudAction, sequelize, user, uuid = undefined, name = un
     if (crudAction === 'update') {
         try {
             const [user, created] = await User(sequelize).findOrCreate({
-                where: {userId: user.id},
+                where: {userId: discordUser.id},
                 defaults: {
                     name: name,
                     uid: uuid
@@ -68,6 +68,7 @@ module.exports = async (crudAction, sequelize, user, uuid = undefined, name = un
                 }
             }
         } catch (error) {
+            console.log(error)
             /**
              * Error response
              * @type {{message, status: string}}
@@ -83,18 +84,18 @@ module.exports = async (crudAction, sequelize, user, uuid = undefined, name = un
         try {
             const userResponse = await User(sequelize).findOne({
                 where: {
-                    userId: user.id
+                    userId: discordUser.id
                 }
             })
 
             response.status = 'success'
             if (userResponse !== null) {
                 response = {
-                    message: "Informations de `" + user.username + "`",
+                    message: "Informations de `" + discordUser.username + "`",
                     data: {
                         name: userResponse.name,
                         uid: userResponse.uid,
-                        user: user
+                        user: discordUser
                     }
                 }
             } else {
