@@ -1,5 +1,6 @@
 const findOption = require('../Utils/CommandHelper')
 const UserDataProvider = require('../../DataProvider/UserDataProvider')
+const { MessageEmbed } = require('discord.js')
 
 module.exports = async (sequelize, commandName, interaction) => {
     /**
@@ -32,33 +33,15 @@ module.exports = async (sequelize, commandName, interaction) => {
         let embed = null;
         if (response.data) {
             // TODO : code ici pour afficher les embeds
-            embed = {
-                "title": "title ~~(did you know you can have markdown here too?)~~",
-                "description": "this supports [named links](https://discordapp.com) on top of the previously shown subset of markdown. ```\nyes, even code blocks```",
-                "url": "https://discordapp.com",
-                "color": 1753330,
-                "timestamp": "2022-06-20T21:15:43.123Z",
-                "footer": {
-                    "icon_url": "https://cdn.discordapp.com/embed/avatars/0.png",
-                    "text": "footer text"
-                },
-                "thumbnail": {
-                    "url": "https://cdn.discordapp.com/embed/avatars/0.png"
-                },
-                "image": {
-                    "url": "https://cdn.discordapp.com/embed/avatars/0.png"
-                },
-                "author": {
-                    "name": "author name",
-                    "url": "https://discordapp.com",
-                    "icon_url": "https://cdn.discordapp.com/embed/avatars/0.png"
-                },
-                "fields": [
-                    {
-                        "name": "🤔",
-                        "value": "some of these properties have certain limits..."
-                    }
-                ]
+            { embed = new MessageEmbed()
+                .setColor('f2d77c')
+                .setDescription(`<:Primogemmes:913866333848997958> **Profil Genshin Impact de ${targetUser.user}** \n ㅤ`)
+                .addFields(
+                    { name : 'Pseudo', value: `${response.data.name}`, inline: true },
+                    { name : 'UID', value: `${response.data.uid}`, inline: true },
+                    { name : 'Vitrine de personnages', value: `[Voir sur enka.network](https://enka.network/u/${response.data.uid})`, inline: false },
+                )
+                .setThumbnail(targetUser.user.displayAvatarURL())
             }
         }
 
