@@ -11,7 +11,7 @@ module.exports = async (crudAction, sequelize, discordUser, uuid = undefined, na
     }
 
     // Not EU uid
-    if (uuid > 800000000 || uuid < 700000000) {
+    if (uuid > 799999999 || uuid < 700000000) {
         return {
             status: 'error',
             message: "L'uid est invalide"
@@ -58,13 +58,21 @@ module.exports = async (crudAction, sequelize, discordUser, uuid = undefined, na
                 if (userUpdate.name === name && userUpdate.uid === uuid) {
                     response = {
                         status: 'updated',
-                        message: 'Vos informations ont été mis à jour !'
+                        message: 'Vos informations ont été mis à jour !',
+                        data: {
+                            name: name,
+                            uid: uuid
+                        }
                     }
                 }
             } else {
                 response = {
                     status: 'created',
-                    message: 'Les informations ont bien été ajoutées'
+                    message: 'Les informations ont bien été ajoutées',
+                    data: {
+                        name: name,
+                        uid: uuid
+                    }
                 }
             }
         } catch (error) {

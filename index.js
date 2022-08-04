@@ -4,6 +4,8 @@ const client = new Client({intents: [Intents.FLAGS.GUILDS]});
 const {GenshinKit, util} = require('@genshin-kit/core');
 const { Sequelize } = require('sequelize');
 const genshin = new GenshinKit()
+const {CacheService} = require( './src/Services/CacheService');
+
 // DB connection
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PWD, {
     host: process.env.DB_HOST,
