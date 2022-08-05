@@ -17,12 +17,14 @@ class CacheService {
         return this.cache.keys()
     }
 
-    set(key, result) {
-        return this.cache.set(key, result, this.cache.stdTTL);
-        // return storeFunction().then((result) => {
-        //     this.cache.set(key, result);
-        //     return result;
-        // });
+    /**
+     * @param key
+     * @param result
+     * @param stdTTL (optional)
+     * @returns {boolean}
+     */
+    set(key, result, stdTTL = this.cache.stdTTL) {
+        return this.cache.set(key, result, stdTTL);
     }
 
     retrieve(key) {

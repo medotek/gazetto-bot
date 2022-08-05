@@ -4,7 +4,8 @@ const client = new Client({intents: [Intents.FLAGS.GUILDS]});
 const {GenshinKit, util} = require('@genshin-kit/core');
 const { Sequelize } = require('sequelize');
 const genshin = new GenshinKit()
-const {CacheService} = require( './src/Services/CacheService');
+// Import commands
+const Commands = require('./src/Components/commands')
 
 // DB connection
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PWD, {
@@ -14,8 +15,6 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
         connectTimeout:100000
     }
 });
-// Import commands
-const Commands = require('./src/Components/commands')
 
 const app = async () =>  {
     try {
