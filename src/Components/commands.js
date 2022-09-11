@@ -6,7 +6,7 @@ export const Commands = (client, sequelize) => {
         if (interaction.type === InteractionType.ApplicationCommand) {
             const {commandName, user} = interaction;
             // Set/Get Uid Command
-            await Uid(sequelize, commandName, interaction, user)
+            await Uid(sequelize, commandName, interaction)
         }
     })
 }

@@ -1,5 +1,4 @@
 import {request} from 'undici'
-import {getJSONResponse} from '../Helper/RequestHelper.js'
 
 /**
  * This class has to be defined on the overall app x bridge : Gu-dahsboard

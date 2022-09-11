@@ -2,6 +2,7 @@ import {findOption} from '../Utils/CommandHelper.js'
 import {UserDataProvider} from '../../DataProvider/UserDataProvider.js'
 import {EmbedBuilder} from 'discord.js'
 import {Cache} from '../../Module/Cache.js'
+import {GudaToken} from "../../Module/GudaToken.js";
 
 export async function Uid(sequelize, commandName, interaction) {
     /**
@@ -12,6 +13,11 @@ export async function Uid(sequelize, commandName, interaction) {
     };
 
     if (commandName === 'set-uid') {
+        console.log(interaction)
+        if (interaction.channelId !== 974701611995779123) {
+            return await interaction.reply({content: "Vous n'êtes pas autorisé à utiliser la commande sur ce salon", ephemeral: true})
+        }
+
         let pseudo = findOption(interaction, 'pseudo');
         let uid = findOption(interaction, 'uid');
         const {user} = interaction
@@ -21,7 +27,11 @@ export async function Uid(sequelize, commandName, interaction) {
 
         // Clear cache if exists
         let cacheKey = 'get-uid' + user.id
-        if (Cache.has(cacheKey) && response.data) {
+        if (Cache.has(cacheKey)
+            && typeof response.data === "object"
+            && response.data !== undefined
+            && Object.keys(response.data).length)
+        {
             Cache.clear(cacheKey)
         }
 
@@ -32,19 +42,31 @@ export async function Uid(sequelize, commandName, interaction) {
      * GET UID COMMAND
      */
     if (commandName === 'get-uid') {
+        // TODO : map channel id
+        if (interaction.channelId !== '974701611995779123') {
+            return await interaction.reply({content: "Vous n'êtes pas autorisé à utiliser la commande sur ce salon", ephemeral: true})
+        }
+
         let ephemeralStatus = true;
         let replyObject = {}
         let targetUser = interaction.options._hoistedOptions[0]
 
         // Gestion du cache
         let cacheKey = 'get-uid' + targetUser.user.id;
-        if (Cache.has(cacheKey)) {
-            response = Cache.retrieve(cacheKey);
+        if (Cache.has(cacheKey) && await Cache.retrieve(cacheKey) !== null) {
+            console.log('passed')
+            response.data = await Cache.retrieve(cacheKey);
         } else {
             response = await UserDataProvider('read', sequelize, targetUser.user)
-            if (response.data !== undefined && response.data.length)
+            if (typeof response.data === "object"
+                && response.data !== undefined
+                && Object.keys(response.data).length)
+            {
                 Cache.set(cacheKey, response.data)
+            }
         }
+
+        console.log(response.data)
 
         // Get data from database
         let embed = null;
@@ -66,7 +88,7 @@ export async function Uid(sequelize, commandName, interaction) {
 
         replyObject.content = response.message
         if (response.status !== 'error') ephemeralStatus = false;
-        replyObject.ephemeral = ephemeralStatus
+        replyObject.ephemeral = true
         if (embed) replyObject.embeds = [embed]
         await interaction.reply(replyObject)
     }

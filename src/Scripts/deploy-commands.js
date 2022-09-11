@@ -1,43 +1,35 @@
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {REST} = require('@discordjs/rest');
-const {Routes} = require('discord-api-types/v9');
-require('dotenv').config()
+import {REST} from '@discordjs/rest'
+import {Routes} from 'discord-api-types/v9'
+import {config} from "dotenv";
+import {InteractionType} from "discord-api-types/v10";
+import {GudaToken} from "../Module/GudaToken.js";
+import {GetUidCommand, SetUidCommand, FicheCommand} from "../Builder/CommandBuilder.js";
+import {getCharacters} from "../Request/Command/CharactersFiche.js";
 
-const commands = [
-    new SlashCommandBuilder().setName('get-uid').setDescription('Affiche les personnages vitrines de l\'utilisateur')
-        .addUserOption((option) =>
-            option.setName('user').setDescription("Choissez l'utilisateur discord pour afficher son uid").setRequired(true),
-        ),
-    new SlashCommandBuilder().setName('set-uid').setDescription('Enregistre ton uid')
-        .addIntegerOption((option) =>
-            option.setName('uid').setDescription('Donner l\'uid de l\'utilisateur genshin').setRequired(true)
-        ).addStringOption((option) =>
-            option.setName('pseudo').setDescription('Votre pseudo sur Genshin').setRequired(true)
-        ),
-    new SlashCommandBuilder().setName('test').setDescription('Gazetto répond par oui ou non'),
-    new SlashCommandBuilder().setName('boop')
-        .setDescription('Boops the specified user, as many times as you want')
-        .addUserOption((option) => option.setName('user').setDescription('The user to boop').setRequired(true))
+config();
 
-        // Adds an integer option
-        .addIntegerOption((option) =>
-            option.setName('boop_amount').setDescription('How many times should the user be booped (defaults to 1)'),
-        )
+// Gudapi - Get weapons from fiches
 
-        // Supports choices too!
-        .addIntegerOption((option) =>
-            option
-                .setName('boop_reminder')
-                .setDescription('How often should we remind you to boop the user')
-                .addChoices({name: 'Every day', value: 1}, {name: 'Weekly', value: 7}),
-        )
-]
-.
-map(command => command.toJSON());
+export async function deployCommands() {
+    // Gudapi - Get characters from fiches
+    let characters = await getCharacters()
 
-const rest = new REST({version: '9'}).setToken(process.env.TOKEN);
+    const commands = [
+        GetUidCommand.toJSON(),
+        SetUidCommand.toJSON(),
+        FicheCommand(characters),
+        {
+            name: 'Test',
+            type: InteractionType.ApplicationCommand
+        }
+    ];
 
-rest.put(Routes.applicationGuildCommands('934804517512425492', '902963233571352606'), {body: commands})
-    .then(() => console.log('Successfully registered application commands.'))
-    .catch(console.error);
+    const rest = new REST({version: '10'}).setToken(process.env.TOKEN);
 
+    rest.put(
+        Routes.applicationGuildCommands(process.env.APP_ID, process.env.GUILD_ID),
+        {body: commands}
+    )
+        .then(() => console.log('Successfully registered application commands.'))
+        .catch(console.error);
+}

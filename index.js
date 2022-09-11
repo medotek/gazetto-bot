@@ -7,6 +7,7 @@ const client = new Client({intents: [GatewayIntentBits.Guilds], partials: [Parti
 import { Sequelize } from 'sequelize'
 // Import commands
 import {Commands} from './src/Components/commands.js'
+import {deployCommands} from "./src/Scripts/deploy-commands.js";
 // DB connection
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PWD, {
     host: process.env.DB_HOST,
@@ -33,11 +34,15 @@ const app = async () =>  {
 
 app().then(async r => {
     if (r.status === 'success') {
+        // Deploy commands
+        await deployCommands()
+
         await client.login(process.env.TOKEN);
 
         client.once('ready', () => {
             console.log('Kibo is ready')
         });
+
     } else {
         console.log(r.message)
     }
