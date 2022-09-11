@@ -1,4 +1,5 @@
-import fetch from 'node-fetch';
+import {request} from 'undici'
+import {getJSONResponse} from '../Helper/RequestHelper.js'
 
 /**
  * This class has to be defined on the overall app x bridge : Gu-dahsboard
@@ -28,17 +29,21 @@ export class GudaTokenService {
     }
 
     async setBearerToken() {
-        this.gudapiToken = await this.getCredentials().then(json => {
-            if (json.token !== undefined && json.token) {
-                this.setLastTimeUpdate()
-                return json.token
-            } else {
+        const { statusCode, headers, trailers, body } = await this.getCredentials()
+        if (statusCode === 200) {
+            this.gudapiToken = await body.json().then(r => {
+                if (r.token !== undefined && r.token) {
+                    return r.token
+                } else {
+                    return null
+                }
+            }).catch(err => {
                 return null
-            }
-        }).catch(err => {
-            // TODO : maybe log in file
-            return null
-        });
+            })
+        } else {
+            // TODO : log message on discord
+            this.gudapiToken = null
+        }
     }
 
     getLastTimeUpdate() {
@@ -54,7 +59,7 @@ export class GudaTokenService {
      * - login as user / ROLE_BOT
      */
     async getCredentials() {
-        return await fetch('http://localhost/api/login', {
+        return await request('http://localhost/api/login', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -65,6 +70,6 @@ export class GudaTokenService {
                 email: "discord@gmail.com",
                 password: "discord@gmail.com"
             })
-        }).then(response => response.json());
+        });
     }
 }

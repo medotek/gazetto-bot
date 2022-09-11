@@ -1,8 +1,9 @@
 import {Uid} from "./Commands/Uid.js";
+import {InteractionType} from "discord-api-types/v10";
 
 export const Commands = (client, sequelize) => {
     client.on('interactionCreate', async interaction => {
-        if (interaction.isCommand()) {
+        if (interaction.type === InteractionType.ApplicationCommand) {
             const {commandName, user} = interaction;
             // Set/Get Uid Command
             await Uid(sequelize, commandName, interaction, user)

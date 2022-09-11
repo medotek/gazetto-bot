@@ -1,6 +1,6 @@
 import {findOption} from '../Utils/CommandHelper.js'
 import {UserDataProvider} from '../../DataProvider/UserDataProvider.js'
-import {MessageEmbed} from 'discord.js'
+import {EmbedBuilder} from 'discord.js'
 import {Cache} from '../../Module/Cache.js'
 
 export async function Uid(sequelize, commandName, interaction) {
@@ -49,7 +49,7 @@ export async function Uid(sequelize, commandName, interaction) {
         // Get data from database
         let embed = null;
         if (response.data) {
-            embed = new MessageEmbed()
+            embed = new EmbedBuilder()
                 .setColor('f2d77c')
                 .setDescription(`<:Primogemmes:913866333848997958> **Profil Genshin Impact de ${targetUser.user}** \n ㅤ`)
                 .addFields(

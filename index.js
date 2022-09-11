@@ -2,8 +2,8 @@ import {config} from  'dotenv'
 // Init dotenv config
 config()
 // Import modules
-import {Client, Intents, MessageSelectMenu, MessageActionRow} from 'discord.js'
-const client = new Client({intents: [Intents.FLAGS.GUILDS]});
+import { Client, GatewayIntentBits, Partials } from 'discord.js'
+const client = new Client({intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel]});
 import { Sequelize } from 'sequelize'
 // Import commands
 import {Commands} from './src/Components/commands.js'
@@ -33,12 +33,10 @@ const app = async () =>  {
 
 app().then(async r => {
     if (r.status === 'success') {
-        client.login(process.env.TOKEN).then(res => {
-            console.log('Client on')
-        });
+        await client.login(process.env.TOKEN);
 
         client.once('ready', () => {
-            console.log('Gazette on !');
+            console.log('Kibo is ready')
         });
     } else {
         console.log(r.message)
