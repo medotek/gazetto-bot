@@ -1,5 +1,6 @@
-const Uid = require('./Commands/Uid')
-module.exports = (client, sequelize) => {
+import {Uid} from "./Commands/Uid.js";
+
+export const Commands = (client, sequelize) => {
     client.on('interactionCreate', async interaction => {
         if (interaction.isCommand()) {
             const {commandName, user} = interaction;

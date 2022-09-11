@@ -1,6 +1,6 @@
-const { DataTypes } = require("sequelize");
+import { DataTypes } from "sequelize"
 
-module.exports = (sequelize) => {
+export const User = (sequelize) => {
     return sequelize.define("discord_uid", {
         userId: {
             primaryKey: true,

@@ -1,6 +1,6 @@
-const User = require('../Models/User')
+import {User} from '../Models/User.js'
 
-module.exports = async (crudAction, sequelize, discordUser, uuid = undefined, name = undefined) => {
+export const UserDataProvider = async (crudAction, sequelize, discordUser, uuid = undefined, name = undefined) => {
     if ((!name && crudAction !== 'read')
         || (!uuid && crudAction !== 'read')
         || !crudAction) {

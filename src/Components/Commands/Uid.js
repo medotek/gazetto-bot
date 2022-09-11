@@ -1,9 +1,9 @@
-const findOption = require('../Utils/CommandHelper')
-const UserDataProvider = require('../../DataProvider/UserDataProvider')
-const {MessageEmbed} = require('discord.js')
-const {cache} = require('../../Module/Cache')
+import {findOption} from '../Utils/CommandHelper.js'
+import {UserDataProvider} from '../../DataProvider/UserDataProvider.js'
+import {MessageEmbed} from 'discord.js'
+import {Cache} from '../../Module/Cache.js'
 
-module.exports = async (sequelize, commandName, interaction) => {
+export async function Uid(sequelize, commandName, interaction) {
     /**
      * SET UID COMMAND
      */
@@ -21,8 +21,8 @@ module.exports = async (sequelize, commandName, interaction) => {
 
         // Clear cache if exists
         let cacheKey = 'get-uid' + user.id
-        if (cache.has(cacheKey) && response.data) {
-            cache.clear(cacheKey)
+        if (Cache.has(cacheKey) && response.data) {
+            Cache.clear(cacheKey)
         }
 
         await interaction.reply({content: response.message, ephemeral: true})
@@ -38,12 +38,12 @@ module.exports = async (sequelize, commandName, interaction) => {
 
         // Gestion du cache
         let cacheKey = 'get-uid' + targetUser.user.id;
-        if (cache.has(cacheKey)) {
-            response = cache.retrieve(cacheKey);
+        if (Cache.has(cacheKey)) {
+            response = Cache.retrieve(cacheKey);
         } else {
             response = await UserDataProvider('read', sequelize, targetUser.user)
             if (response.data !== undefined && response.data.length)
-                cache.set(cacheKey, response.data)
+                Cache.set(cacheKey, response.data)
         }
 
         // Get data from database

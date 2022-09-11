@@ -1,7 +1,7 @@
 /**
  * Declare cache as service for the overall app
  */
-const {CacheService} = require("../Services/CacheService");
+import {CacheService} from "../Services/CacheService.js"
 const ttl = 60 * 60 * 24; // 24h
 
-exports.cache = new CacheService(ttl)
+export const Cache = new CacheService(ttl)
