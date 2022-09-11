@@ -4,7 +4,7 @@ import {config} from "dotenv";
 import {InteractionType} from "discord-api-types/v10";
 import {GudaToken} from "../Module/GudaToken.js";
 import {GetUidCommand, SetUidCommand, FicheCommand} from "../Builder/CommandBuilder.js";
-import {getCharacters} from "../Request/Command/CharactersFiche.js";
+import {getCharacters, getRoles} from "../Request/Command/CharactersFiche.js";
 
 config();
 
@@ -13,11 +13,12 @@ config();
 export async function deployCommands() {
     // Gudapi - Get characters from fiches
     let characters = await getCharacters()
+    let roles = await getRoles()
 
     const commands = [
         GetUidCommand.toJSON(),
         SetUidCommand.toJSON(),
-        FicheCommand(characters),
+        FicheCommand(characters, roles),
         {
             name: 'Test',
             type: InteractionType.ApplicationCommand

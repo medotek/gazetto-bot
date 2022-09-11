@@ -11,9 +11,7 @@ export class GudaTokenService {
     }
 
     async getBearerToken() {
-        console.log(this.lastTimeUpdate)
         if (this.lastTimeUpdate) {
-            console.log('Going to update')
             // + 1h
             let lastTimeUpdateAfter = this.lastTimeUpdate + 3600
             if (Date.now() < lastTimeUpdateAfter) {

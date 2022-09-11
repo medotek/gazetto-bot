@@ -29,7 +29,7 @@ export const SetUidCommand = new SlashCommandBuilder()
                 .setRequired(true)
     );
 
-export const FicheCommand = (characters) => {
+export const FicheCommand = (characters, roles) => {
     if (characters.length) {
         return null
     }
@@ -40,10 +40,21 @@ export const FicheCommand = (characters) => {
         .addStringOption((option) => {
                 let customOption = option
                     .setName('personnage')
-                    .setDescription("Recherche des fiches de la Gazette selon le personnage");
-
+                    .setDescription("Recherche par personnage");
                 for (const [key, character] of Object.entries(characters)) {
                     customOption.addChoices({name: character.name, value: `${character.id}`})
+                }
+
+                return customOption
+            }
+        )
+        .addStringOption((option) => {
+                let customOption = option
+                    .setName('role')
+                    .setDescription("Filtrer par role");
+
+                for (const [key, role] of Object.entries(roles)) {
+                    customOption.addChoices({name: role.name, value: `${role.id}`})
                 }
 
                 return customOption

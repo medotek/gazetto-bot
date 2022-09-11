@@ -54,7 +54,6 @@ export async function Uid(sequelize, commandName, interaction) {
         // Gestion du cache
         let cacheKey = 'get-uid' + targetUser.user.id;
         if (Cache.has(cacheKey) && await Cache.retrieve(cacheKey) !== null) {
-            console.log('passed')
             response.data = await Cache.retrieve(cacheKey);
         } else {
             response = await UserDataProvider('read', sequelize, targetUser.user)
@@ -65,8 +64,6 @@ export async function Uid(sequelize, commandName, interaction) {
                 Cache.set(cacheKey, response.data)
             }
         }
-
-        console.log(response.data)
 
         // Get data from database
         let embed = null;
