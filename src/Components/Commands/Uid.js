@@ -64,7 +64,7 @@ export async function Uid(sequelize, commandName, interaction) {
                 .setThumbnail(targetUser.user.displayAvatarURL())
         }
 
-        replyObject.message = response.message
+        replyObject.content = response.message
         if (response.status !== 'error') ephemeralStatus = false;
         replyObject.ephemeral = ephemeralStatus
         if (embed) replyObject.embeds = [embed]
