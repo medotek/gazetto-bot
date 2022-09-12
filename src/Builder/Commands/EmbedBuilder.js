@@ -21,6 +21,7 @@ export const characterFicheEmbedBuilder = (characterFiche) => {
     let embedBuilder = new EmbedBuilder()
         // TODO : set default color per character
         .setTitle(genshinCharacter.name)
+        .setURL(process.env.GAZETTE_CHARACTERS_BASE_URL + genshinCharacter.name.toLowerCase().trim().replaceAll(' ', '-'))
         .setDescription(null)
         .setColor(0xf2d77c)
         .setThumbnail(genshinCharacter.imageIcon)
