@@ -29,6 +29,12 @@ export const SetUidCommand = new SlashCommandBuilder()
                 .setRequired(true)
     );
 
+/**
+ * Create FicheCommand
+ * @param characters
+ * @param roles
+ * @constructor
+ */
 export const FicheCommand = (characters, roles) => {
     if (characters.length) {
         return null
@@ -40,7 +46,8 @@ export const FicheCommand = (characters, roles) => {
         .addStringOption((option) => {
                 let customOption = option
                     .setName('personnage')
-                    .setDescription("Recherche par personnage");
+                    .setDescription("Recherche par personnage")
+                    .setRequired(true);
                 for (const [key, character] of Object.entries(characters)) {
                     customOption.addChoices({name: character.name, value: `${character.id}`})
                 }
@@ -54,7 +61,7 @@ export const FicheCommand = (characters, roles) => {
                     .setDescription("Filtrer par role");
 
                 for (const [key, role] of Object.entries(roles)) {
-                    customOption.addChoices({name: role.name, value: `${role.id}`})
+                    customOption.addChoices({name: role.name, value: `${role.name}`})
                 }
 
                 return customOption

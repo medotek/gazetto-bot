@@ -1,8 +1,6 @@
-import {findOption} from '../Utils/CommandHelper.js'
 import {UserDataProvider} from '../../DataProvider/UserDataProvider.js'
 import {EmbedBuilder} from 'discord.js'
 import {Cache} from '../../Module/Cache.js'
-import {GudaToken} from "../../Module/GudaToken.js";
 
 export async function Uid(sequelize, commandName, interaction) {
     /**
@@ -13,13 +11,11 @@ export async function Uid(sequelize, commandName, interaction) {
     };
 
     if (commandName === 'set-uid') {
-        console.log(interaction)
-        if (interaction.channelId !== 974701611995779123) {
+        if (interaction.channelId !== '974701611995779123') {
             return await interaction.reply({content: "Vous n'êtes pas autorisé à utiliser la commande sur ce salon", ephemeral: true})
         }
-
-        let pseudo = findOption(interaction, 'pseudo');
-        let uid = findOption(interaction, 'uid');
+        let pseudo = interaction.options.get('pseudo');
+        let uid = interaction.options.get('uid');
         const {user} = interaction
         if (pseudo.value && uid.value) {
             response = await UserDataProvider('update', sequelize, user, uid.value, pseudo.value)
@@ -69,7 +65,7 @@ export async function Uid(sequelize, commandName, interaction) {
         let embed = null;
         if (response.data) {
             embed = new EmbedBuilder()
-                .setColor('f2d77c')
+                .setColor(0xf2d77c)
                 .setDescription(`<:Primogemmes:913866333848997958> **Profil Genshin Impact de ${targetUser.user}** \n ㅤ`)
                 .addFields(
                     {name: 'Pseudo', value: `${response.data.name}`, inline: true},
@@ -85,7 +81,7 @@ export async function Uid(sequelize, commandName, interaction) {
 
         replyObject.content = response.message
         if (response.status !== 'error') ephemeralStatus = false;
-        replyObject.ephemeral = true
+        replyObject.ephemeral = ephemeralStatus
         if (embed) replyObject.embeds = [embed]
         await interaction.reply(replyObject)
     }
