@@ -42,11 +42,11 @@ export async function CharacterFiche(commandName, interaction) {
                 }
             } else {
                 replyObj.content = "Le personnage ne possède pas de fiche";
-                replyObj.ephemeral = true;
             }
         }
     }
-    replyObj.ephemeral = true;
+    if (replyObj.content)
+        replyObj.ephemeral = true
     if (embeds.length)
         replyObj.embeds = embeds
 

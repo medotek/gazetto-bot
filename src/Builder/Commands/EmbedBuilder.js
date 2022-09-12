@@ -11,13 +11,16 @@ export const characterFicheEmbedBuilder = (characterFiche) => {
     if (!genshinCharacter
         || typeof genshinCharacter !== "object"
         || !genshinCharacter.hasOwnProperty('imageIcon')
+        || !genshinCharacter.hasOwnProperty('name')
         || !genshinCharacter.imageIcon
+        || !genshinCharacter.name
         || !image) {
         return null;
     }
 
     let embedBuilder = new EmbedBuilder()
         // TODO : set default color per character
+        .setTitle(genshinCharacter.name)
         .setDescription(null)
         .setColor(0xf2d77c)
         .setThumbnail(genshinCharacter.imageIcon)
