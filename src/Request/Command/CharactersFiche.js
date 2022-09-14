@@ -12,7 +12,9 @@ export async function getRoles() {
 }
 
 export async function getCharacterFiche(characterId, roles = null) {
-    return await fetchResponse(`character-fiche/get/${characterId}`, roles, "POST")
+    let method = "GET"
+    if (roles) method = "POST"
+    return await fetchResponse(`character-fiche/get/${characterId}`, roles, method)
 }
 
 /**
@@ -50,13 +52,16 @@ async function gudapiEndpointRequest(endpoint, data = null, method = "GET") {
         "Content-Type": "application/json",
         "Accept": "application/json",
     }
+    let options = {
+        method: method,
+        headers: headers
+    }
+    if (data) {
+        options.body = data
+    }
 
     return await request(
         process.env.GUDASHBOARD_BASE_URL + endpoint,
-        {
-            method: method,
-            headers: headers,
-            body: data
-        }
+        options
     )
 }

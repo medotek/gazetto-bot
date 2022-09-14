@@ -35,7 +35,6 @@ export const characterFicheEmbedBuilder = (characterFiche) => {
 
     // Format roles
     let rolesArray = [];
-    console.log(roles)
     if (roles && Array.isArray(roles) && roles.length) {
         roles.forEach(role => {
             if (typeof role === "object" && role.hasOwnProperty("name") && role.name)

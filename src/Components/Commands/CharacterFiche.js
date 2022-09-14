@@ -49,6 +49,9 @@ export async function CharacterFiche(commandName, interaction) {
         replyObj.ephemeral = true
     if (embeds.length)
         replyObj.embeds = embeds
+    // else if (!replyObj.content && !embeds.length)
+    //     replyObj.content = "Une erreur est survenue"
+    //     replyObj.ephemeral = true
 
     await interaction.reply(replyObj)
 }

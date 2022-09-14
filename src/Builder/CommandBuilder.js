@@ -54,8 +54,8 @@ export const FicheCommand = (characters, roles) => {
             .addStringOption((option) => {
                     let customOption = option
                         .setName('role')
-                        .setDescription("Filtrer par role");
-
+                        .setDescription("Filtrer par role")
+                        .setRequired(true);
                     for (const [key, role] of Object.entries(roles)) {
                         customOption.addChoices({name: role.name, value: `${role.name}`})
                     }
