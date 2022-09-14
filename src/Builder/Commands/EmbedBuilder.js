@@ -19,8 +19,6 @@ export const characterFicheEmbedBuilder = (characterFiche, iteration = null) => 
         return null;
     }
 
-    console.log(iteration)
-
     let embedBuilder = new EmbedBuilder()
         // TODO : set default color per character
         .setTitle(genshinCharacter.name)
