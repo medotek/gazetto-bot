@@ -33,7 +33,9 @@ export async function CharacterFiche(commandName, interaction) {
                 // Multiple fiches
                 if (Object.keys(characterFiches.result).length > 1) {
                     for (const [key, fiche] of Object.entries(characterFiches.result)) {
-                        let ficheEmbed = characterFicheEmbedBuilder(fiche)
+                        // TODO : I limited the number of embed of 10 in message
+                        if (parseInt(key)+1 === 10) break;
+                        let ficheEmbed = characterFicheEmbedBuilder(fiche, key)
                         ficheEmbed ? embeds.push(ficheEmbed) : ''
                     }
                 } else if (Object.keys(characterFiches.result).length === 1) {

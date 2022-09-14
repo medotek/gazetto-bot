@@ -4,9 +4,10 @@ config()
 
 /**
  * @param characterFiche
+ * @param iteration
  * @returns {EmbedBuilder}
  */
-export const characterFicheEmbedBuilder = (characterFiche) => {
+export const characterFicheEmbedBuilder = (characterFiche, iteration = null) => {
     const {genshinCharacter, image, roles} = characterFiche
     if (!genshinCharacter
         || typeof genshinCharacter !== "object"
@@ -18,6 +19,8 @@ export const characterFicheEmbedBuilder = (characterFiche) => {
         return null;
     }
 
+    console.log(iteration)
+
     let embedBuilder = new EmbedBuilder()
         // TODO : set default color per character
         .setTitle(genshinCharacter.name)
@@ -27,6 +30,7 @@ export const characterFicheEmbedBuilder = (characterFiche) => {
                 .toLowerCase()
                 .trim()
                 .replaceAll(' ', '-')
+            + (iteration ? '#'+iteration : '')
         )
         .setDescription(null)
         .setColor(0xf2d77c)
