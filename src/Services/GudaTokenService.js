@@ -1,4 +1,6 @@
 import {request} from 'undici'
+import {config} from 'dotenv'
+config()
 
 /**
  * This class has to be defined on the overall app x bridge : Gu-dahsboard
@@ -65,8 +67,8 @@ export class GudaTokenService {
             },
 
             body: JSON.stringify({
-                email: "discord@gmail.com",
-                password: "discord@gmail.com"
+                email: process.env.GUDA_EMAIL,
+                password: process.env.GUDA_PWD
             })
         });
     }

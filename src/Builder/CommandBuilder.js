@@ -1,5 +1,4 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
-import {getCharacters} from "../Request/Command/CharactersFiche.js";
 
 export const GetUidCommand = new SlashCommandBuilder()
     .setName('get-uid')
@@ -36,7 +35,7 @@ export const SetUidCommand = new SlashCommandBuilder()
  * @constructor
  */
 export const FicheCommand = (characters, roles) => {
-    if (characters.length) {
+    if (!characters || !characters.length) {
         return null
     }
 
