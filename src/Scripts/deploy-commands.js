@@ -2,7 +2,6 @@ import {REST} from '@discordjs/rest'
 import {Routes} from 'discord-api-types/v9'
 import {config} from "dotenv";
 import {InteractionType} from "discord-api-types/v10";
-import {GudaToken} from "../Module/GudaToken.js";
 import {GetUidCommand, SetUidCommand, FicheCommand} from "../Builder/CommandBuilder.js";
 import {getCharacters, getRoles} from "../Request/Command/CharactersFiche.js";
 
@@ -14,16 +13,17 @@ export async function deployCommands() {
     // Gudapi - Get characters from fiches
     let characters = await getCharacters()
     let roles = await getRoles()
-
     const commands = [
         GetUidCommand.toJSON(),
         SetUidCommand.toJSON(),
-        FicheCommand(characters, roles),
         {
             name: 'Test',
             type: InteractionType.ApplicationCommand
         }
     ];
+
+    let ficheCommand = FicheCommand(characters, roles)
+    ficheCommand ? commands.push(ficheCommand): console.log('Fiche command not available');
 
     const rest = new REST({version: '10'}).setToken(process.env.TOKEN);
 

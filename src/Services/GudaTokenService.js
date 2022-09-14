@@ -59,7 +59,7 @@ export class GudaTokenService {
      * - login as user / ROLE_BOT
      */
     async getCredentials() {
-        return await request('http://localhost/api/login', {
+        return await request(`${process.env.GUDA_SSL}://${process.env.GUDA_BASEURL}/api/login`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
