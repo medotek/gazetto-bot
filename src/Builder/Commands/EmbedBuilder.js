@@ -1,5 +1,6 @@
 import {EmbedBuilder} from "discord.js";
 import {config} from 'dotenv'
+import {formattedRoles, roleFieldBuilder} from "../../Components/Utils/CommandHelper.js";
 config()
 
 /**
@@ -36,26 +37,12 @@ export const characterFicheEmbedBuilder = (characterFiche, iteration = null) => 
         .setImage(process.env.GUDASHBOARD_BASE_IMG_URL + image)
 
     // Format roles
-    let rolesArray = [];
-    if (roles && Array.isArray(roles) && roles.length) {
-        roles.forEach(role => {
-            if (typeof role === "object" && role.hasOwnProperty("name") && role.name)
-                rolesArray.push(role.name)
-        })
-    }
-
-    let formattedRoles = rolesArray.length ? rolesArray.join(', ') : ''
-    if (formattedRoles) {
-        embedBuilder.addFields(roleFieldBuilder(formattedRoles))
+    let fRoles = formattedRoles(roles)
+    if (fRoles) {
+        embedBuilder.addFields(roleFieldBuilder(fRoles, false))
     }
 
     return embedBuilder
 }
 
-function roleFieldBuilder(value) {
-    return {
-        "name": `Role(s)`,
-        "value": value,
-        "inline": true
-    }
-}
+

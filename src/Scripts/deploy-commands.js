@@ -16,17 +16,14 @@ export async function deployCommands() {
     const commands = [
         GetUidCommand.toJSON(),
         SetUidCommand.toJSON(),
-        {
-            name: 'Test',
-            type: InteractionType.ApplicationCommand
-        }
+        // {
+        //     name: 'Test',
+        //     type: InteractionType.ApplicationCommand
+        // }
     ];
-
     let ficheCommand = FicheCommand(characters, roles)
     ficheCommand ? commands.push(ficheCommand): console.log('Fiche command not available');
-
     const rest = new REST({version: '10'}).setToken(process.env.TOKEN);
-
     rest.put(
         Routes.applicationGuildCommands(process.env.APP_ID, process.env.GUILD_ID),
         {body: commands}
