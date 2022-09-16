@@ -28,6 +28,7 @@ export async function CharacterFiche(commandName, interaction) {
             roles = JSON.stringify({'role': role.value})
         }
 
+        // TODO : découpage
         let characterFiches = await getCharacterFiche(character.value, roles)
         if (characterFiches && typeof role === "object" && characterFiches.hasOwnProperty('result')) {
             if (characterFiches.result && Object.keys(characterFiches.result).length) {
@@ -38,12 +39,34 @@ export async function CharacterFiche(commandName, interaction) {
                         current: 0, // Current key start at 0
                         data: characterFiches.result
                     }
-                    // Set cache for navigation actions
-                    Cache.set(cacheKey, actionCharacterFiches)
-                    let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
-                    // Display a second embed to show prev/next elements
-                    let navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed)
-                    navEmbed ? embeds.push(navEmbed) : embeds.push(ficheEmbed)
+                    try {
+                        // Set cache for navigation actions
+                        Cache.set(cacheKey, actionCharacterFiches)
+                        let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
+                        // Display a second embed to show prev/next elements
+                        let navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed)
+                        if (navEmbed) {
+                            embeds.push(navEmbed)
+                            // Action Row
+                            const row = new ActionRowBuilder()
+                                .addComponents(
+                                    new ButtonBuilder()
+                                        .setCustomId('characterFichePrev_' + interaction.id)
+                                        .setLabel('⬅ Précédent')
+                                        .setStyle(ButtonStyle.Primary),
+                                    new ButtonBuilder()
+                                        .setCustomId('characterFicheNext_' + interaction.id)
+                                        .setLabel('Suivant ➡')
+                                        .setStyle(ButtonStyle.Primary),
+                                );
+                            replyObj.components = [row]
+                        } else {
+                            embeds.push(ficheEmbed)
+                        }
+                    } catch (e) {
+                        // TODO : log
+                        console.log(e)
+                    }
                 } else if (Object.keys(characterFiches.result).length === 1) {
                     let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
                     ficheEmbed ? embeds.push(ficheEmbed) : replyObj.content = "Le personnage ne possède pas de fiches"
@@ -54,24 +77,10 @@ export async function CharacterFiche(commandName, interaction) {
         }
     }
 
-    // Action Row
-    const row = new ActionRowBuilder()
-        .addComponents(
-            new ButtonBuilder()
-                .setCustomId('characterFichePrev')
-                .setLabel('⬅ Précédent')
-                .setStyle(ButtonStyle.Primary),
-            new ButtonBuilder()
-                .setCustomId('characterFicheNext')
-                .setLabel('Suivant ➡')
-                .setStyle(ButtonStyle.Primary),
-        );
-
-    // if (replyObj.content)
-    replyObj.ephemeral = true
+    if (replyObj.content)
+        replyObj.ephemeral = true
     if (embeds.length)
         replyObj.embeds = embeds
-    replyObj.components = [row]
     // else if (!replyObj.content && !embeds.length)
     //     replyObj.content = "Une erreur est survenue"
     //     replyObj.ephemeral = true

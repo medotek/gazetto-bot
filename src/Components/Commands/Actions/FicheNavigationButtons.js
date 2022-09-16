@@ -1,26 +1,83 @@
 import {ButtonBuilder, ButtonStyle, ComponentType} from "discord.js";
+import {Cache} from "../../../Module/Cache.js";
+import {getNextAndPrevFichesFromTheCurrentOne} from "../../../DTO/Commands/FicheNavigationDTO.js";
+import {characterFicheEmbedBuilder} from "../../../Builder/Commands/EmbedBuilder.js";
+import {navigationActionEmbedBuilder} from "../../../Builder/Commands/NavigationActionEmbedBuilder.js";
 
-export function ficheNavigationButtons(interaction) {
-    if (interaction.message.interaction.commandName !== 'fiche')
+export async function ficheNavigationButtons(interaction) {
+    if (interaction.message.interaction.commandName !== 'fiche'
+        || typeof interaction.customId === 'undefined')
         return
 
+
+    let interactionUpdate = {}
     let newComponents = interaction.message.components;
-    console.log(interaction.message.components)
-    for (const [key, item] of Object.entries(interaction.message.components)) {
-        // TODO if negation, disabled all CTA
-        if (newComponents[key].components.length) {
-            newComponents[key].components.forEach((component, i) => {
-                newComponents[key].components[i].data.disabled = true
-            })
+    // Prev or Next
+    let customIdArray = interaction.customId.split('_')
+    let navAction = customIdArray[0]
+    let originalInteractionId = customIdArray[1]
+    // Restrict to the author of the command only
+    if (interaction.user.id === interaction.message.interaction.user.id) {
+        let hasError = false
+        let cacheKey = 'userId' + interaction.user.id + 'interactionId' + originalInteractionId
+        try {
+            let {data, current} = await Cache.retrieve(cacheKey)
+            if (data && typeof current !== 'undefined') {
+                const {prevEl, nextEl} = getNextAndPrevFichesFromTheCurrentOne(data, current)
+                let newEmbed = null
+                let newCurrentKey = null
+                switch (navAction) {
+                    case 'characterFicheNext':
+                        if (nextEl && nextEl.hasOwnProperty('data') && nextEl.hasOwnProperty('key')) {
+                            newEmbed = characterFicheEmbedBuilder(nextEl.data)
+                            // Update current key in cache
+                            newCurrentKey = nextEl.key
+                        }
+                        break;
+                    case 'characterFichePrev':
+                        if (prevEl && prevEl.hasOwnProperty('data') && prevEl.hasOwnProperty('key')) {
+                            newEmbed = characterFicheEmbedBuilder(prevEl.data)
+                            // Update current key in cache
+                            newCurrentKey = prevEl.key
+                        }
+                        break;
+                    default:
+                        hasError = true;
+                }
+
+                if (typeof newCurrentKey === "number")
+                    Cache.set(cacheKey, {data, current: newCurrentKey})
+                if (newEmbed)
+                    interactionUpdate.embeds = [await navigationActionEmbedBuilder(cacheKey, newEmbed)]
+            } else {
+                hasError = true
+            }
+        } catch(e) {
+            // CacheId doesn't exists
+            console.log(e)
+            hasError = true
         }
 
-        if (item.data.type === ComponentType.ActionRow) {
+        if (hasError) {
+            // Has error = disabled all buttons
+            for (const [key, item] of Object.entries(interaction.message.components)) {
+                // TODO if negation, disabled all CTA
+                if (newComponents[key].components.length) {
+                    newComponents[key].components.forEach((component, i) => {
+                        newComponents[key].components[i].data.disabled = true
+                        newComponents[key].components[i].data.style = ButtonStyle.Secondary
+                    })
+                }
+
+                if (item.data.type === ComponentType.ActionRow) {
+                }
+            }
         }
+
     }
 
-    interaction.update({
-        components: newComponents
-    })
+    interactionUpdate.components = newComponents
+    interaction.update(interactionUpdate)
     // if (newRows.length)
     //     interaction.message.edit({
     //         components: newRows
