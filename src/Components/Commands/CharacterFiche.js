@@ -43,12 +43,27 @@ export async function CharacterFiche(commandName, interaction) {
                         // Set cache for navigation actions
                         Cache.set(cacheKey, actionCharacterFiches)
                         let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
-                        // Display a second embed to show prev/next elements
-                        let navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed)
-                        if (navEmbed) {
-                            embeds.push(navEmbed)
-                            // Action Row
-                            const row = new ActionRowBuilder()
+                        let navEmbed = null;
+                        let hasTwoObjs = null;
+                        if (Object.keys(characterFiches.result).length === 2) {
+                            // Display a second embed to show prev/next elements
+                            navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed, 'next')
+                            hasTwoObjs = true;
+                        } else {
+                            // Display a second embed to show prev/next elements
+                            navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed)
+                        }
+                        let row = null
+                        if (hasTwoObjs) {
+                            row = new ActionRowBuilder()
+                                .addComponents(
+                                    new ButtonBuilder()
+                                        .setCustomId('characterFicheNext_' + interaction.id)
+                                        .setLabel('Suivant ➡')
+                                        .setStyle(ButtonStyle.Primary),
+                                );
+                        } else {
+                            row = new ActionRowBuilder()
                                 .addComponents(
                                     new ButtonBuilder()
                                         .setCustomId('characterFichePrev_' + interaction.id)
@@ -59,6 +74,11 @@ export async function CharacterFiche(commandName, interaction) {
                                         .setLabel('Suivant ➡')
                                         .setStyle(ButtonStyle.Primary),
                                 );
+                        }
+
+                        if (navEmbed) {
+                            embeds.push(navEmbed)
+                            // Action Row
                             replyObj.components = [row]
                         } else {
                             embeds.push(ficheEmbed)

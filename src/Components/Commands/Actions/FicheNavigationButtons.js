@@ -1,4 +1,4 @@
-import {ButtonBuilder, ButtonStyle, ComponentType} from "discord.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType} from "discord.js";
 import {Cache} from "../../../Module/Cache.js";
 import {getNextAndPrevFichesFromTheCurrentOne} from "../../../DTO/Commands/FicheNavigationDTO.js";
 import {characterFicheEmbedBuilder} from "../../../Builder/Commands/EmbedBuilder.js";
@@ -16,6 +16,8 @@ export async function ficheNavigationButtons(interaction) {
     let customIdArray = interaction.customId.split('_')
     let navAction = customIdArray[0]
     let originalInteractionId = customIdArray[1]
+    let row;
+    let navigationForTwoObjs = null;
     // Restrict to the author of the command only
     if (interaction.user.id === interaction.message.interaction.user.id) {
         let hasError = false
@@ -33,6 +35,14 @@ export async function ficheNavigationButtons(interaction) {
                             // Update current key in cache
                             newCurrentKey = nextEl.key
                         }
+                        row = new ActionRowBuilder()
+                            .addComponents(
+                                new ButtonBuilder()
+                                    .setCustomId('characterFichePrev_' + originalInteractionId)
+                                    .setLabel('⬅ Précédent')
+                                    .setStyle(ButtonStyle.Primary),
+                            );
+                        navigationForTwoObjs = 'prev'
                         break;
                     case 'characterFichePrev':
                         if (prevEl && prevEl.hasOwnProperty('data') && prevEl.hasOwnProperty('key')) {
@@ -40,6 +50,14 @@ export async function ficheNavigationButtons(interaction) {
                             // Update current key in cache
                             newCurrentKey = prevEl.key
                         }
+                        row = new ActionRowBuilder()
+                            .addComponents(
+                                new ButtonBuilder()
+                                    .setCustomId('characterFicheNext_' + originalInteractionId)
+                                    .setLabel('Suivant ➡')
+                                    .setStyle(ButtonStyle.Primary),
+                            );
+                        navigationForTwoObjs = 'next'
                         break;
                     default:
                         hasError = true;
@@ -48,11 +66,11 @@ export async function ficheNavigationButtons(interaction) {
                 if (typeof newCurrentKey === "number")
                     Cache.set(cacheKey, {data, current: newCurrentKey})
                 if (newEmbed)
-                    interactionUpdate.embeds = [await navigationActionEmbedBuilder(cacheKey, newEmbed)]
+                    interactionUpdate.embeds = [await navigationActionEmbedBuilder(cacheKey, newEmbed, (Object.keys(data).length === 2 && navigationForTwoObjs) ? navigationForTwoObjs : null)]
             } else {
                 hasError = true
             }
-        } catch(e) {
+        } catch (e) {
             // CacheId doesn't exists
             console.log(e)
             hasError = true
@@ -72,8 +90,9 @@ export async function ficheNavigationButtons(interaction) {
                 if (item.data.type === ComponentType.ActionRow) {
                 }
             }
+        } else if (row) {
+            newComponents = [row]
         }
-
     }
 
     interactionUpdate.components = newComponents

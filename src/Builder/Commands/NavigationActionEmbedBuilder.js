@@ -6,22 +6,30 @@ import {getNextAndPrevFichesFromTheCurrentOne} from "../../DTO/Commands/FicheNav
 /**
  * @param cacheKey
  * @param embed
+ * @param hasTwoObjs
  * @returns {Promise<void>}
  */
-export async function navigationActionEmbedBuilder(cacheKey, embed) {
+export async function navigationActionEmbedBuilder(cacheKey, embed, hasTwoObjs = null) {
     let {data, current} = await Cache.retrieve(cacheKey)
     if (data && typeof current !== 'undefined') {
         let prev, next = null
         const {prevEl, nextEl} = getNextAndPrevFichesFromTheCurrentOne(data, current)
         if ((prevEl.data && prevEl.data.hasOwnProperty('roles'))
-            && (nextEl.data  && nextEl.data.hasOwnProperty('roles'))) {
+            && (nextEl.data && nextEl.data.hasOwnProperty('roles'))) {
             let prevRoles = formattedRoles(prevEl.data.roles)
             let nextRoles = formattedRoles(nextEl.data.roles)
             prev = roleFieldBuilder(prevRoles, true, "Fiche précédente")
             next = roleFieldBuilder(nextRoles, true, "Fiche suivante")
         }
 
-        return embed.addFields(prev, next)
+        switch (hasTwoObjs) {
+            case 'next':
+                return embed.addFields(next)
+            case 'prev':
+                return embed.addFields(prev)
+            default:
+                return embed.addFields(prev, next)
+        }
     }
 
     return null
