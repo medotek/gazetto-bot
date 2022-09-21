@@ -1,5 +1,4 @@
 import {UserDataProvider} from '../../DataProvider/UserDataProvider.js'
-import {EmbedBuilder} from 'discord.js'
 import {Cache} from '../../Module/Cache.js'
 import {InteractionType} from "discord-api-types/v10";
 import {getUserUidData} from "../../DTO/Commands/Uid/UserFromCacheDTO.js";
@@ -55,8 +54,9 @@ export async function Uid(sequelize, commandName, interaction) {
         }
         replyObject.content = response.message
         if (response.status !== 'error') ephemeralStatus = false;
-        replyObject.ephemeral = ephemeralStatus
         if (embed) replyObject.embeds = [embed]
+        else ephemeralStatus = true;
+        replyObject.ephemeral = ephemeralStatus
         await interaction.reply(replyObject)
     }
 }

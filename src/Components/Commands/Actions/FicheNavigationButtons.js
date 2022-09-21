@@ -18,6 +18,7 @@ export async function ficheNavigationButtons(interaction) {
     let originalInteractionId = customIdArray[1]
     let row;
     let navigationForTwoObjs = null;
+    let hasNavigationForTwoObjs = false;
     // Restrict to the author of the command only
     if (interaction.user.id === interaction.message.interaction.user.id) {
         let hasError = false
@@ -65,8 +66,14 @@ export async function ficheNavigationButtons(interaction) {
 
                 if (typeof newCurrentKey === "number")
                     Cache.set(cacheKey, {data, current: newCurrentKey})
-                if (newEmbed)
-                    interactionUpdate.embeds = [await navigationActionEmbedBuilder(cacheKey, newEmbed, (Object.keys(data).length === 2 && navigationForTwoObjs) ? navigationForTwoObjs : null)]
+                if (newEmbed) {
+                    let navigationForTwoObjsEmbed = null
+                    if (Object.keys(data).length === 2 && navigationForTwoObjs) {
+                        hasNavigationForTwoObjs = true
+                        navigationForTwoObjsEmbed = navigationForTwoObjs
+                    }
+                    interactionUpdate.embeds = [await navigationActionEmbedBuilder(cacheKey, newEmbed, navigationForTwoObjsEmbed)]
+                }
             } else {
                 hasError = true
             }
@@ -90,15 +97,11 @@ export async function ficheNavigationButtons(interaction) {
                 if (item.data.type === ComponentType.ActionRow) {
                 }
             }
-        } else if (row) {
+        } else if (row && hasNavigationForTwoObjs) {
             newComponents = [row]
         }
     }
 
     interactionUpdate.components = newComponents
     interaction.update(interactionUpdate)
-    // if (newRows.length)
-    //     interaction.message.edit({
-    //         components: newRows
-    //     })
 }

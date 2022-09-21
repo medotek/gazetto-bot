@@ -5,7 +5,6 @@ import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
 import {navigationActionEmbedBuilder} from "../../Builder/Commands/NavigationActionEmbedBuilder.js";
 import MiniSearch from 'minisearch'
 import {config} from 'dotenv'
-
 config()
 
 export async function CharacterFiche(commandName, interaction) {
@@ -37,7 +36,6 @@ export async function CharacterFiche(commandName, interaction) {
     let charactersFicheKey = "ficheCharacters"
     const characters = await Cache.retrieve(charactersFicheKey)
     if (!characters || typeof characters !== "object") {
-        console.log('test')
         let charactersRequest = await getCharacters()
         let charactersArr = []
         if (charactersRequest && typeof charactersRequest === "object") {

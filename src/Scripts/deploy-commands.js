@@ -17,7 +17,7 @@ export async function deployCommands() {
     const commands = [
         GetUidCommand.toJSON(),
         SetUidCommand.toJSON(),
-        HelpCommand.toJSON(),
+        // HelpCommand.toJSON(),
         GetUidFromUserMenuContextCommand
     ];
     let ficheCommand = FicheCommand(characters, roles)
