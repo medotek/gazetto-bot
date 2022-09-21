@@ -1,27 +1,58 @@
 import {Cache} from '../../Module/Cache.js'
-import {getCharacterFiche} from "../../Request/Command/CharactersFiche.js";
+import {getCharacterFiche, getCharacters} from "../../Request/Command/CharactersFiche.js";
 import {characterFicheEmbedBuilder} from "../../Builder/Commands/EmbedBuilder.js";
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
 import {navigationActionEmbedBuilder} from "../../Builder/Commands/NavigationActionEmbedBuilder.js";
 import MiniSearch from 'minisearch'
+import {config} from 'dotenv'
+
+config()
 
 export async function CharacterFiche(commandName, interaction) {
     if (commandName !== 'fiche') {
         return;
     }
 
-    if (interaction.channelId !== '974701611995779123') {
+    // Allowed channels part
+    let channelsId = process.env.GUDA_FICHE_ALLOWED_CHANNELS_IDS
+    let notAllowed = true;
+    let channels = null
+    if (channelsId) {
+        channels = channelsId.split(',')
+        channels.forEach(channel => {
+            if (channel === interaction.channelId) {
+                notAllowed = false;
+                return true;
+            }
+        })
+    }
+
+    if (notAllowed || typeof channels !== 'object') {
         return await interaction.reply({
             content: "Vous n'êtes pas autorisé à utiliser la commande sur ce salon",
             ephemeral: true
         })
     }
 
-    const characters = await Cache.retrieve('ficheCharacters')
+    let charactersFicheKey = "ficheCharacters"
+    const characters = await Cache.retrieve(charactersFicheKey)
+    if (!characters || typeof characters !== "object") {
+        console.log('test')
+        let charactersRequest = await getCharacters()
+        let charactersArr = []
+        if (charactersRequest && typeof charactersRequest === "object") {
+            for (const [key, character] of Object.entries(charactersRequest)) {
+                charactersArr.push({name: character.name, id: character.id})
+            }
+            Cache.set(charactersFicheKey, charactersArr)
+        }
+    }
+
     let characterSearchTerm = interaction.options.get('personnage')
     let role = interaction.options.get('role')
     let embeds = [];
-    let replyObj = {content: "default content"}
+    let replyObj = {content: "Une erreur est survenue"}
+    // Search engine
     let miniSearch = new MiniSearch({
         fields: ['name'],
         storeFields: ['name', 'id'],
@@ -31,15 +62,12 @@ export async function CharacterFiche(commandName, interaction) {
     })
 
     if (characters && typeof characters === 'object') {
-        console.log(characters)
         // Add array for search index
         miniSearch.addAll(characters)
 
         if (characterSearchTerm && typeof characterSearchTerm === "object" && characterSearchTerm.hasOwnProperty('value')) {
             if (characterSearchTerm.value.length > 2) {
                 let result = miniSearch.search(characterSearchTerm.value)
-                // TODO : if multiple result, return a format for those possibilities
-                console.log(result.length)
                 if (result.length) {
                     replyObj.content = null
                     if (result.length === 1) {
@@ -121,10 +149,12 @@ export async function CharacterFiche(commandName, interaction) {
                             }
                         }
                     } else {
-                        // for multiple results
-                        for (const [key, res] of Object.entries(result)) {
-                            console.log(result)
-                        }
+                        // for multiple (characters) results
+                        // for (const [key, res] of Object.entries(result)) {
+                        //     console.log(res)
+                        // }
+                        // TODO : if multiple result, return a format for those possibilities
+                        replyObj.content = "Aucun personnage ne correspond à la recherche"
                     }
                 } else {
                     replyObj.content = "Aucun personnage ne correspond à la recherche"
@@ -140,15 +170,6 @@ export async function CharacterFiche(commandName, interaction) {
         replyObj.ephemeral = true
     if (embeds.length)
         replyObj.embeds = embeds
-    // else if (!replyObj.content && !embeds.length)
-    //     replyObj.content = "Une erreur est survenue"
-    //     replyObj.ephemeral = true
 
     await interaction.reply(replyObj)
-}
-
-
-async function processCharacterFiche(characterId, role) {
-
-    return null;
 }

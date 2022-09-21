@@ -1,4 +1,4 @@
-import {Uid} from "./Commands/Uid.js";
+import {GetUidFromUserMenuContext, Uid} from "./Commands/Uid.js";
 import {InteractionType} from "discord-api-types/v10";
 import {CharacterFiche} from "./Commands/CharacterFiche.js";
 import {ficheNavigationButtons} from "./Commands/Actions/FicheNavigationButtons.js";
@@ -6,7 +6,7 @@ import {ficheNavigationButtons} from "./Commands/Actions/FicheNavigationButtons.
 export const Commands = (client, sequelize) => {
     client.on('interactionCreate', async interaction => {
         if (interaction.type === InteractionType.ApplicationCommand) {
-            const {commandName, user} = interaction;
+            const {commandName} = interaction;
             // Set/Get Uid Command
             await Uid(sequelize, commandName, interaction)
             // Fiche Command
@@ -16,6 +16,11 @@ export const Commands = (client, sequelize) => {
         // Button Action
         if (interaction.isButton()) {
             await ficheNavigationButtons(interaction)
+        }
+
+        // UserContextMenu
+        if (interaction.isUserContextMenuCommand()) {
+            await GetUidFromUserMenuContext(interaction)
         }
     })
 }

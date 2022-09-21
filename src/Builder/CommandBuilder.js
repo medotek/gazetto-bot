@@ -48,13 +48,6 @@ export const FicheCommand = (characters, roles) => {
             .setName('fiche')
             .setDescription('Effectue des recherches parmi les fiches de la Gazette (Armes et Personnages)')
             .addStringOption((option) => {
-                // let i = 0;
-                    // for (const [key, character] of Object.entries(characters)) {
-                    //     if (i === 25) break
-                    //     customOption.addChoices({name: character.name, value: character.id.toString() })
-                    //     i++;
-                    // }
-
                     return option
                         .setName('personnage')
                         .setDescription("Recherche par personnage")
@@ -64,7 +57,7 @@ export const FicheCommand = (characters, roles) => {
             .addStringOption((option) => {
                     let customOption = option
                         .setName('role')
-                        .setDescription("Filtrer par role");
+                        .setDescription("(facultatif) Filtrer par role");
                     // .setRequired(true);
                     for (const [key, role] of Object.entries(roles)) {
                         customOption.addChoices({name: role.name, value: `${role.name}`})

@@ -4,6 +4,7 @@ import {config} from "dotenv";
 import {InteractionType} from "discord-api-types/v10";
 import {GetUidCommand, SetUidCommand, FicheCommand} from "../Builder/CommandBuilder.js";
 import {getCharacters, getRoles} from "../Request/Command/CharactersFiche.js";
+import {GetUidFromUserMenuContextCommand, HelpCommand} from "../Components/Commands/MiscellaneousCommands.js";
 
 config();
 
@@ -16,10 +17,8 @@ export async function deployCommands() {
     const commands = [
         GetUidCommand.toJSON(),
         SetUidCommand.toJSON(),
-        // {
-        //     name: 'Test',
-        //     type: InteractionType.ApplicationCommand
-        // }
+        HelpCommand.toJSON(),
+        GetUidFromUserMenuContextCommand
     ];
     let ficheCommand = FicheCommand(characters, roles)
     ficheCommand ? commands.push(ficheCommand): console.log('Fiche command not available');

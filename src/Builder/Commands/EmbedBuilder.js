@@ -45,4 +45,29 @@ export const characterFicheEmbedBuilder = (characterFiche, iteration = null) => 
     return embedBuilder
 }
 
+/***
+ * @param data
+ * @param user
+ * @returns {boolean|EmbedBuilder}
+ */
+export function userUidEmbedBuilder(data, user) {
+    if (typeof data !== "object" || typeof user !== "object") {
+        return false
+    }
+
+    return new EmbedBuilder()
+        .setColor(0xf2d77c)
+        .setDescription(`<:Primogemmes:913866333848997958> **Profil Genshin Impact de ${user}** \n ㅤ`)
+        .addFields(
+            {name: 'Pseudo', value: `${data.name}`, inline: true},
+            {name: 'UID', value: `${data.uid}`, inline: true},
+            {
+                name: 'Vitrine de personnages',
+                value: `[Voir sur enka.network](https://enka.network/u/${data.uid})`,
+                inline: false
+            },
+        )
+        .setThumbnail(user.displayAvatarURL())
+}
+
 

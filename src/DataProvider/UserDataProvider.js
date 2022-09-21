@@ -77,13 +77,9 @@ export const UserDataProvider = async (crudAction, sequelize, discordUser, uuid 
             }
         } catch (error) {
             console.log(error)
-            /**
-             * Error response
-             * @type {{message, status: string}}
-             */
             response = {
-                status: 'error',
-                message: error
+                success: 'error',
+                message: 'Une erreur est survenue sur la commande UID'
             }
         }
     }
@@ -111,9 +107,10 @@ export const UserDataProvider = async (crudAction, sequelize, discordUser, uuid 
             }
 
         } catch (error) {
+            console.log(error)
             response = {
                 success: 'error',
-                message: JSON.parse(error)
+                message: 'Une erreur est survenue sur la commande UID'
             }
         }
     }
