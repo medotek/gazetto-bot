@@ -15,7 +15,7 @@ export const Commands = (client, sequelize) => {
 
         // Button Action
         if (interaction.isButton()) {
-            ficheNavigationButtons(interaction)
+            await ficheNavigationButtons(interaction)
         }
     })
 }
