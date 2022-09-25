@@ -65,7 +65,7 @@ export async function CharacterFiche(commandName, interaction) {
 
         if (characterSearchTerm && typeof characterSearchTerm === "object" && characterSearchTerm.hasOwnProperty('value')) {
             if (characterSearchTerm.value.length > 2) {
-                let result = miniSearch.search(characterSearchTerm.value)
+                let result = miniSearch.search(characterSearchTerm.value.trim())
                 if (result.length) {
                     replyObj.content = null
                     if (result.length === 1) {

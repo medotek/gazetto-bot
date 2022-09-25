@@ -2,9 +2,8 @@ import {config} from  'dotenv'
 // Init dotenv config
 config()
 // Import modules
-import { Client, GatewayIntentBits, Partials } from 'discord.js'
+import {ActivityType, Client, GatewayIntentBits, Partials} from 'discord.js'
 const client = new Client({intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel]});
-import { Sequelize } from 'sequelize'
 // Import commands
 import {Commands} from './src/Components/commands.js'
 import {deployCommands} from "./src/Scripts/deploy-commands.js";
@@ -32,6 +31,10 @@ app().then(async r => {
         await deployCommands()
 
         await client.login(process.env.TOKEN);
+
+        client.on("ready", () => {
+            client.user.setActivity("/kibo", { type: ActivityType.Watching})
+        })
 
         client.once('ready', () => {
             console.log('Kibo is ready')

@@ -76,8 +76,12 @@ export async function GetUidFromUserMenuContext(interaction) {
             if (response.data) {
                 embed = userUidEmbedBuilder(response.data, user)
             }
-            if (embed) replyObj.embeds = [embed]
-            else replyObj.content = response.message
+            if (embed) {
+                replyObj.embeds = [embed]
+                replyObj.content = response.message
+            }
+
+            replyObj.content = response.message
         }
     }
 

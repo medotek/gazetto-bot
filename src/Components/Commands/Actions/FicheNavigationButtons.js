@@ -86,7 +86,6 @@ export async function ficheNavigationButtons(interaction) {
         if (hasError) {
             // Has error = disabled all buttons
             for (const [key, item] of Object.entries(interaction.message.components)) {
-                // TODO if negation, disabled all CTA
                 if (newComponents[key].components.length) {
                     newComponents[key].components.forEach((component, i) => {
                         newComponents[key].components[i].data.disabled = true
@@ -94,6 +93,7 @@ export async function ficheNavigationButtons(interaction) {
                     })
                 }
 
+                // TODO check this line
                 if (item.data.type === ComponentType.ActionRow) {
                 }
             }

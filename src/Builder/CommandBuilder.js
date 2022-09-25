@@ -40,7 +40,7 @@ export const FicheCommand = (characters, roles) => {
         let cacheKey = 'ficheCharacters';
         let charactersArr = []
         for (const [key, character] of Object.entries(characters)) {
-            charactersArr.push({name: character.name, id: character.id})
+            charactersArr.push({name: character.name.trim(), id: character.id})
         }
         Cache.set(cacheKey, charactersArr)
 
