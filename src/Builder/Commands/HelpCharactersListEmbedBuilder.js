@@ -9,7 +9,7 @@ export function helpCharactersListEmbedBuilder(charactersByElement) {
         if (!name || !icon ||!color) return null;
         let embed = new EmbedBuilder()
             .setColor(parseInt(color.replace('#', ''), 16))
-            .setDescription(`Les personnages de type ${name}`)
+            .setDescription(`――――――――――――――――――――――――――――\n\rLes personnages de type ${name}`)
             .setThumbnail(icon)
 
         for (const [key, character] of Object.entries(charactersByElement.characters)) {

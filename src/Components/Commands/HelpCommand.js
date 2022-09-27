@@ -2,6 +2,7 @@ import {EmbedBuilder} from "@discordjs/builders";
 import {getCharacters} from "../../Request/Command/CharactersFiche.js";
 import {Cache} from "../../Module/Cache.js";
 import {helpCharactersListEmbedBuilder} from "../../Builder/Commands/HelpCharactersListEmbedBuilder.js";
+import {ActionRowBuilder, SelectMenuBuilder} from "discord.js";
 
 export async function helpCommand(interaction) {
     const {commandName} = interaction
@@ -32,15 +33,18 @@ export async function helpCommand(interaction) {
 
         let ephemeral = true;
         if (interaction.channelId === "974701611995779123") {
-            // ephemeral = false;
+            ephemeral = false;
+        }
+        let replyObj = {
+            ephemeral: ephemeral
         }
 
         // each embed represent an element
         let cacheKey = 'charactersListHelpCommand'
         let charactersList = await Cache.retrieve(cacheKey)
+        let charactersArr = []
         if (!charactersList) {
             let characters = await getCharacters()
-            let charactersArr = []
             for (const [key, character] of Object.entries(characters)) {
                 const {characterElement} = character
                 let elementKey = charactersArr.findIndex(x => x.element.name === characterElement.name)
@@ -54,17 +58,35 @@ export async function helpCommand(interaction) {
                 }
             }
 
-            charactersArr.forEach(item => {
-                let embed = helpCharactersListEmbedBuilder(item)
-                if (embed) embeds.push(embed)
-            })
-
-            Cache.set(cacheKey, embeds)
+            charactersList = charactersArr
+            Cache.set(cacheKey, charactersList)
         }
 
-        interaction.reply({
-            embeds: charactersList ?? embeds,
-            ephemeral: ephemeral
-        })
+        if (Object.keys(charactersList).length) {
+            let embed = helpCharactersListEmbedBuilder(charactersList[0])
+            if (embed) embeds.push(embed)
+
+            // Add select menu action row
+            let selectMenuBuilder = new SelectMenuBuilder()
+                .setCustomId('select')
+                .setPlaceholder('Choisissez un élément');
+
+            charactersList.forEach((item, key) => {
+                const {element} = item
+                if (element && typeof element === "object" && element.hasOwnProperty('name')) {
+                    selectMenuBuilder.addOptions({
+                        label: `${element.name}`,
+                        // because we remove the first el, the array has moved keys
+                        value: `${key}`,
+                    })
+                }
+            })
+
+            const row = new ActionRowBuilder().addComponents(selectMenuBuilder);
+            replyObj.components = [row]
+        }
+
+        replyObj.embeds = embeds
+        interaction.reply(replyObj)
     }
 }

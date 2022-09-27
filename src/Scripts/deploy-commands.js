@@ -1,14 +1,11 @@
 import {REST} from '@discordjs/rest'
 import {Routes} from 'discord-api-types/v9'
 import {config} from "dotenv";
-import {InteractionType} from "discord-api-types/v10";
 import {GetUidCommand, SetUidCommand, FicheCommand} from "../Builder/CommandBuilder.js";
 import {getCharacters, getRoles} from "../Request/Command/CharactersFiche.js";
 import {GetUidFromUserMenuContextCommand, HelpCommand} from "../Components/Commands/MiscellaneousCommands.js";
 
 config();
-
-// Gudapi - Get weapons from fiches
 
 export async function deployCommands() {
     // Gudapi - Get characters from fiches
@@ -17,7 +14,7 @@ export async function deployCommands() {
     const commands = [
         GetUidCommand.toJSON(),
         SetUidCommand.toJSON(),
-        // HelpCommand.toJSON(),
+        HelpCommand.toJSON(),
         GetUidFromUserMenuContextCommand
     ];
     let ficheCommand = FicheCommand(characters, roles)

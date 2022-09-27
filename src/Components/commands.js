@@ -3,6 +3,7 @@ import {InteractionType} from "discord-api-types/v10";
 import {CharacterFiche} from "./Commands/CharacterFiche.js";
 import {ficheNavigationButtons} from "./Commands/Actions/FicheNavigationButtons.js";
 import {helpCommand} from "./Commands/HelpCommand.js";
+import {selectElementHelpCommandActions} from "./Commands/Actions/SelectElementHelpCommandActions.js";
 
 export const Commands = (client, sequelize) => {
     client.on('interactionCreate', async interaction => {
@@ -19,6 +20,10 @@ export const Commands = (client, sequelize) => {
         // Button Action
         if (interaction.isButton()) {
             await ficheNavigationButtons(interaction)
+        }
+
+        if (interaction.isSelectMenu()) {
+            await selectElementHelpCommandActions(interaction)
         }
 
         // UserContextMenu
