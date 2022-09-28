@@ -16,7 +16,7 @@ export async function selectElementHelpCommandActions(interaction) {
         if (charactersList && typeof charactersList === "object" && Object.keys(charactersList).length) {
             if (interaction.values && interaction.values.length) {
                 // approx 24 hours before disabling the action row - discord timestamp has a different timezone
-                if (interaction.message.createdTimestamp + 5000 + 60 * 60 * 24  > Date.now()) {
+                if (interaction.message.createdTimestamp + 60 * 60 * 24  > Date.now()) {
                     embeds.pop()
                     let currentKey = parseInt(interaction.values[0])
                     embeds.push(helpCharactersListEmbedBuilder(charactersList[currentKey]))
@@ -24,7 +24,6 @@ export async function selectElementHelpCommandActions(interaction) {
                     for (const [key, item] of Object.entries(interaction.message.components)) {
                         if (newComponents[key].components.length) {
                             newComponents[key].components.forEach((component, i) => {
-                                console.log(component)
                                 newComponents[key].components[i].data.disabled = true
                             })
                         }
