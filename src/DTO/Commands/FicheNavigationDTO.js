@@ -6,9 +6,7 @@
 export function getNextAndPrevFichesFromTheCurrentOne(data, current) {
     let nextKey, prevKey;
     if (current) {
-        if (Object.keys(data).length - 1 > current + 1) {
-            nextKey = current + 1
-        } else if (Object.keys(data).length - 1 === current) {
+        if (Object.keys(data).length - 1 === current) {
             nextKey = 0
         } else {
             nextKey = current + 1

@@ -32,9 +32,18 @@ export async function helpCommand(interaction) {
         )
 
         let ephemeral = true;
-        if (interaction.channelId === "974701611995779123") {
-            ephemeral = false;
+        let channelsId = process.env.GUDA_FICHE_ALLOWED_CHANNELS_IDS
+        let channels = null
+        if (channelsId) {
+            channels = channelsId.split(',')
+            channels.forEach(channel => {
+                if (channel === interaction.channelId) {
+                    ephemeral = false;
+                    return true;
+                }
+            })
         }
+
         let replyObj = {
             ephemeral: ephemeral
         }
