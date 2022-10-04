@@ -65,9 +65,8 @@ export async function CharacterFiche(commandName, interaction) {
 
         if (characterSearchTerm && typeof characterSearchTerm === "object" && characterSearchTerm.hasOwnProperty('value')) {
             if (characterSearchTerm.value.length > 2) {
-                let result = miniSearch.search(characterSearchTerm.value.trim())
+                let result = miniSearch.search(characterSearchTerm.value.trim().replace(/[^a-zA-Z0-9]/g, ""))
                 if (result.length) {
-                    replyObj.content = null
                     if (result.length === 1) {
                         if (result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
                             let roles = null;
@@ -80,7 +79,7 @@ export async function CharacterFiche(commandName, interaction) {
                             let characterFiches = await getCharacterFiche(result[0].id, roles)
                             if (characterFiches && typeof role === "object" && characterFiches.hasOwnProperty('result') && typeof characterFiches.result === "object") {
                                 // TODO : watch
-                                // replyObj.content = null;
+                                replyObj.content = null;
                                 if (characterFiches.result && Object.keys(characterFiches.result).length) {
                                     // Multiple fiches
                                     if (Object.keys(characterFiches.result).length > 1) {

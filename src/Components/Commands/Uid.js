@@ -21,7 +21,7 @@ export async function Uid(sequelize, commandName, interaction) {
         let uid = interaction.options.get('uid');
         const {user} = interaction
         if (pseudo.value && uid.value) {
-            response = await UserDataProvider('update', sequelize, user, uid.value, pseudo.value)
+            response = await UserDataProvider('update', sequelize, user, uid.value, pseudo.value.replace(/[^a-zA-Z0-9]/g, ""))
         }
         // Clear cache if exists
         let cacheKey = 'get-uid' + user.id
