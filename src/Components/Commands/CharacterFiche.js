@@ -40,7 +40,7 @@ export async function CharacterFiche(commandName, interaction) {
         let charactersArr = []
         if (charactersRequest && typeof charactersRequest === "object") {
             for (const [key, character] of Object.entries(charactersRequest)) {
-                charactersArr.push({name: character.name, id: character.id})
+                charactersArr.push({name: character.name.toLowerCase().replace(/\s/g, ""), id: character.id})
             }
             Cache.set(charactersFicheKey, charactersArr)
         }
@@ -65,7 +65,7 @@ export async function CharacterFiche(commandName, interaction) {
 
         if (characterSearchTerm && typeof characterSearchTerm === "object" && characterSearchTerm.hasOwnProperty('value')) {
             if (characterSearchTerm.value.length > 2) {
-                let result = miniSearch.search(characterSearchTerm.value.trim().replace(/[^a-zA-Z0-9]/g, ""))
+                let result = miniSearch.search(characterSearchTerm.value.toLowerCase().replace(/[^a-zA-Z0-9]/g, "").trim().replace(/\s/g, ""))
                 if (result.length) {
                     if (result.length === 1) {
                         if (result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
@@ -168,5 +168,5 @@ export async function CharacterFiche(commandName, interaction) {
     if (embeds.length)
         replyObj.embeds = embeds
 
-    await interaction.reply(replyObj)
+    return await interaction.reply(replyObj)
 }
