@@ -5,6 +5,7 @@ import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
 import {navigationActionEmbedBuilder} from "../../Builder/Commands/NavigationActionEmbedBuilder.js";
 import MiniSearch from 'minisearch'
 import {config} from 'dotenv'
+
 config()
 
 export async function CharacterFiche(commandName, interaction) {
@@ -40,7 +41,11 @@ export async function CharacterFiche(commandName, interaction) {
         let charactersArr = []
         if (charactersRequest && typeof charactersRequest === "object") {
             for (const [key, character] of Object.entries(charactersRequest)) {
-                charactersArr.push({name: character.name.toLowerCase().replace(/\s/g, ""), id: character.id})
+                let formattedCharacterName = character.name.toLowerCase();
+                if (formattedCharacterName.match(/\S/g).length < 6) {
+                    formattedCharacterName = formattedCharacterName.replace(/\s/g, "");
+                }
+                charactersArr.push({name: formattedCharacterName, id: character.id})
             }
             Cache.set(charactersFicheKey, charactersArr)
         }
@@ -64,8 +69,12 @@ export async function CharacterFiche(commandName, interaction) {
         miniSearch.addAll(characters)
 
         if (characterSearchTerm && typeof characterSearchTerm === "object" && characterSearchTerm.hasOwnProperty('value')) {
-            if (characterSearchTerm.value.length > 2) {
-                let result = miniSearch.search(characterSearchTerm.value.toLowerCase().replace(/[^a-zA-Z0-9]/g, "").trim().replace(/\s/g, ""))
+            let formattedCharacterName = characterSearchTerm.value.toLowerCase().replace(/[^a-zA-Z0-9]/g, "");
+            if (formattedCharacterName.length > 2) {
+                if (formattedCharacterName.match(/\S/g).length < 6) {
+                    formattedCharacterName = formattedCharacterName.replace(/\s/g, "");
+                }
+                let result = miniSearch.search(formattedCharacterName)
                 if (result.length) {
                     if (result.length === 1) {
                         if (result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {

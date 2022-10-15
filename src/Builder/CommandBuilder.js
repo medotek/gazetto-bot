@@ -40,8 +40,17 @@ export const FicheCommand = (characters, roles) => {
         let cacheKey = 'ficheCharacters';
         let charactersArr = []
         for (const [key, character] of Object.entries(characters)) {
-            charactersArr.push({name: character.name.toLowerCase().replace(/\s/g, ""), id: character.id})
+            if (typeof character.name !== 'undefined' && character.name) {
+                let formattedCharacterName = character.name.toLowerCase();
+                if (formattedCharacterName.match(/\S/g).length < 6) {
+                    formattedCharacterName = formattedCharacterName.replace(/\s/g, "");
+                }
+                charactersArr.push({name: formattedCharacterName, id: character.id})
+            }
         }
+        // DEBUG
+        console.log(charactersArr)
+
         Cache.set(cacheKey, charactersArr)
 
         return new SlashCommandBuilder()
