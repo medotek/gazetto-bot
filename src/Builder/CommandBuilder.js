@@ -14,20 +14,7 @@ export const GetUidCommand = new SlashCommandBuilder()
 
 export const SetUidCommand = new SlashCommandBuilder()
     .setName('set-uid')
-    .setDescription('Enregistre ton uid')
-    .addIntegerOption((option) =>
-        option
-            .setName('uid')
-            .setDescription('Donner l\'uid de l\'utilisateur genshin')
-            .setRequired(true)
-    )
-    .addStringOption(
-        (option) =>
-            option
-                .setName('pseudo')
-                .setDescription('Votre pseudo sur Genshin')
-                .setRequired(true)
-    );
+    .setDescription('Enregistre ton uid');
 
 /**
  * Create FicheCommand
@@ -37,6 +24,9 @@ export const SetUidCommand = new SlashCommandBuilder()
  */
 export const FicheCommand = (characters, roles) => {
     if (typeof characters === "object" && Object.keys(characters).length) {
+        /***************************/
+        /****** MISE EN CACHE ******/
+        /***************************/
         let cacheKey = 'ficheCharacters';
         let charactersArr = []
         for (const [key, character] of Object.entries(characters)) {
@@ -48,10 +38,9 @@ export const FicheCommand = (characters, roles) => {
                 charactersArr.push({name: formattedCharacterName, id: character.id})
             }
         }
-        // DEBUG
-        console.log(charactersArr)
 
         Cache.set(cacheKey, charactersArr)
+
 
         return new SlashCommandBuilder()
             .setName('fiche')

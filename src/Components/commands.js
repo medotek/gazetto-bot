@@ -4,9 +4,14 @@ import {CharacterFiche} from "./Commands/CharacterFiche.js";
 import {ficheNavigationButtons} from "./Commands/Actions/FicheNavigationButtons.js";
 import {helpCommand} from "./Commands/HelpCommand.js";
 import {selectElementHelpCommandActions} from "./Commands/Actions/SelectElementHelpCommandActions.js";
+import {UserDataProvider} from "../DataProvider/UserDataProvider.js";
+import {Cache} from '../Module/Cache.js'
 
 export const Commands = (client, sequelize) => {
     client.on('interactionCreate', async interaction => {
+        /***********************************/
+        /*********** APP COMMAND ***********/
+        /***********************************/
         if (interaction.type === InteractionType.ApplicationCommand) {
             const {commandName} = interaction;
             // Set/Get Uid Command
@@ -17,16 +22,51 @@ export const Commands = (client, sequelize) => {
             await helpCommand(interaction)
         }
 
-        // Button Action
+        /***********************************/
+        /********* MODAL SUBMITTED *********/
+        /***********************************/
+        if (interaction.isModalSubmit()) {
+            let response = {
+                message: 'An error occurred, medo help!'
+            };
+
+            if (interaction.customId === 'setUidModal') {
+                const {user} = interaction
+                const pseudo = interaction.fields.getTextInputValue('setUidNickname');
+                const uid = interaction.fields.getTextInputValue('setUidNumber');
+                if (pseudo && uid) {
+                    response = await UserDataProvider('update', sequelize, user, uid, pseudo.replace(/[^a-zA-Z0-9]/g, ""))
+                }
+                // Clear cache if exists
+                let cacheKey = 'get-uid' + user.id
+                if (Cache.has(cacheKey)
+                    && typeof response.data === "object"
+                    && response.data !== undefined
+                    && Object.keys(response.data).length) {
+                    Cache.clear(cacheKey)
+                }
+            }
+
+            return await interaction.reply({content: response.message, ephemeral: true})
+        }
+
+        /***********************************/
+        /********* BUTTON ACTIONS **********/
+        /***********************************/
         if (interaction.isButton()) {
             await ficheNavigationButtons(interaction)
         }
 
+        /***********************************/
+        /********* SELECT ACTIONS **********/
+        /***********************************/
         if (interaction.isSelectMenu()) {
             await selectElementHelpCommandActions(interaction)
         }
 
-        // UserContextMenu
+        /***********************************/
+        /******** USER CONTEXT MENU ********/
+        /***********************************/
         if (interaction.isUserContextMenuCommand()) {
             await GetUidFromUserMenuContext(interaction)
         }

@@ -1,5 +1,15 @@
 import {User} from '../Models/User.js'
 
+/**
+ * Processing db record
+ * @param crudAction
+ * @param sequelize
+ * @param discordUser
+ * @param uuid
+ * @param name
+ * @returns {Promise<{message: string, status: string}>}
+ * @constructor
+ */
 export const UserDataProvider = async (crudAction, sequelize, discordUser, uuid = undefined, name = undefined) => {
     if ((!name && crudAction !== 'read')
         || (!uuid && crudAction !== 'read')
@@ -10,8 +20,8 @@ export const UserDataProvider = async (crudAction, sequelize, discordUser, uuid 
         }
     }
 
-    // Not EU uid
-    if (uuid > 799999999 || uuid < 700000000) {
+    // Valid genshin UID (EU, US)
+    if (uuid > 999999999 || uuid < 700000000) {
         return {
             status: 'error',
             message: "L'uid est invalide"

@@ -1,8 +1,7 @@
-import {UserDataProvider} from '../../DataProvider/UserDataProvider.js'
-import {Cache} from '../../Module/Cache.js'
-import {InteractionType} from "discord-api-types/v10";
+import {InteractionType, TextInputStyle} from "discord-api-types/v10";
 import {getUserUidData} from "../../DTO/Commands/Uid/UserFromCacheDTO.js";
 import {userUidEmbedBuilder} from "../../Builder/Commands/EmbedBuilder.js";
+import {ActionRowBuilder, ModalBuilder, TextInputBuilder} from "discord.js";
 
 export async function Uid(sequelize, commandName, interaction) {
     /**
@@ -13,25 +12,16 @@ export async function Uid(sequelize, commandName, interaction) {
     };
 
     if (commandName === 'set-uid') {
+        // Allowed channels part
         if (await allowChannels(interaction)) {
             return;
         }
-        // Allowed channels part
-        let pseudo = interaction.options.get('pseudo');
-        let uid = interaction.options.get('uid');
-        const {user} = interaction
-        if (pseudo.value && uid.value) {
-            response = await UserDataProvider('update', sequelize, user, uid.value, pseudo.value.replace(/[^a-zA-Z0-9]/g, ""))
-        }
-        // Clear cache if exists
-        let cacheKey = 'get-uid' + user.id
-        if (Cache.has(cacheKey)
-            && typeof response.data === "object"
-            && response.data !== undefined
-            && Object.keys(response.data).length) {
-            Cache.clear(cacheKey)
-        }
-        await interaction.reply({content: response.message, ephemeral: true})
+
+        /***********************************/
+        /************ SHOW MODAL ***********/
+        /***********************************/
+        // Show the modal to the user
+        await interaction.showModal(setUidModal());
     }
 
     /**
@@ -121,4 +111,31 @@ async function allowChannels(interaction) {
     }
 
     return false;
+}
+
+function setUidModal() {
+    const modal = new ModalBuilder()
+        .setCustomId('setUidModal')
+        .setTitle('Enregistrement de l\'UID');
+
+    const nicknameInput = new TextInputBuilder()
+        .setCustomId('setUidNickname')
+        // The label is the prompt the user sees for this input
+        .setLabel("Ton pseudo sur Genshin")
+        // Short means only a single line of text
+        .setStyle(TextInputStyle.Short);
+
+    const uidInput = new TextInputBuilder()
+        .setCustomId('setUidNumber')
+        .setLabel("Ton UID Genshin")
+        // Paragraph means multiple lines of text.
+        .setStyle(TextInputStyle.Short);
+
+    // An action row only holds one text input,
+    // so you need one action row per text input.
+    const firstActionRow = new ActionRowBuilder().addComponents(nicknameInput);
+    const secondActionRow = new ActionRowBuilder().addComponents(uidInput);
+
+    // Add inputs to the modal
+    return modal.addComponents(firstActionRow, secondActionRow);
 }
