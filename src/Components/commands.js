@@ -9,6 +9,11 @@ import {Cache} from '../Module/Cache.js'
 
 export const Commands = (client, sequelize) => {
     client.on('interactionCreate', async interaction => {
+
+        let response = {
+            message: 'An error occurred, medo help!'
+        };
+
         /***********************************/
         /*********** APP COMMAND ***********/
         /***********************************/
@@ -20,15 +25,33 @@ export const Commands = (client, sequelize) => {
             await CharacterFiche(commandName, interaction)
             // Help Command
             await helpCommand(interaction)
+        } else
+
+        /***********************************/
+        /********* BUTTON ACTIONS **********/
+        /***********************************/
+        if (interaction.isButton()) {
+            await ficheNavigationButtons(interaction)
+        } else
+
+        /***********************************/
+        /********* SELECT ACTIONS **********/
+        /***********************************/
+        if (interaction.isSelectMenu()) {
+            await selectElementHelpCommandActions(interaction)
         }
+
+        /***********************************/
+        /******** USER CONTEXT MENU ********/
+        /***********************************/
+        if (interaction.isUserContextMenuCommand()) {
+            await GetUidFromUserMenuContext(interaction)
+        } else
 
         /***********************************/
         /********* MODAL SUBMITTED *********/
         /***********************************/
         if (interaction.isModalSubmit()) {
-            let response = {
-                message: 'An error occurred, medo help!'
-            };
 
             if (interaction.customId === 'setUidModal') {
                 const {user} = interaction
@@ -46,30 +69,9 @@ export const Commands = (client, sequelize) => {
                     Cache.clear(cacheKey)
                 }
             }
-
-            return await interaction.reply({content: response.message, ephemeral: true})
         }
 
-        /***********************************/
-        /********* BUTTON ACTIONS **********/
-        /***********************************/
-        if (interaction.isButton()) {
-            await ficheNavigationButtons(interaction)
-        }
-
-        /***********************************/
-        /********* SELECT ACTIONS **********/
-        /***********************************/
-        if (interaction.isSelectMenu()) {
-            await selectElementHelpCommandActions(interaction)
-        }
-
-        /***********************************/
-        /******** USER CONTEXT MENU ********/
-        /***********************************/
-        if (interaction.isUserContextMenuCommand()) {
-            await GetUidFromUserMenuContext(interaction)
-        }
+        await interaction.reply({content: response.message, ephemeral: true})
     })
 }
 
