@@ -14,8 +14,8 @@ export async function deployCommands() {
     const commands = [
         GetUidCommand.toJSON(),
         SetUidCommand.toJSON(),
-        // HelpCommand.toJSON(),
-        // GetUidFromUserMenuContextCommand
+        HelpCommand.toJSON(),
+        GetUidFromUserMenuContextCommand
     ];
     let ficheCommand = FicheCommand(characters, roles)
     ficheCommand ? commands.push(ficheCommand): console.log('Fiche command not available');
