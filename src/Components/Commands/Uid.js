@@ -12,11 +12,6 @@ export async function Uid(sequelize, commandName, interaction) {
     };
 
     if (commandName === 'set-uid') {
-        // Allowed channels part
-        if (await allowChannels(interaction)) {
-            return;
-        }
-
         /***********************************/
         /************ SHOW MODAL ***********/
         /***********************************/

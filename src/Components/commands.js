@@ -69,9 +69,9 @@ export const Commands = (client, sequelize) => {
                     Cache.clear(cacheKey)
                 }
             }
-        }
 
-        await interaction.reply({content: response.message, ephemeral: true})
+            await interaction.reply({content: response.message, ephemeral: true})
+        }
     })
 }
 
