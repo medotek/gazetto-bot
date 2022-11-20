@@ -16,7 +16,7 @@ export async function Uid(sequelize, commandName, interaction) {
         /************ SHOW MODAL ***********/
         /***********************************/
         // Show the modal to the user
-        await interaction.showModal(setUidModal());
+        await interaction.showModal(await setUidModal(interaction));
     }
 
     /**
@@ -108,7 +108,7 @@ async function allowChannels(interaction) {
     return false;
 }
 
-function setUidModal() {
+async function setUidModal(interaction) {
     const modal = new ModalBuilder()
         .setCustomId('setUidModal')
         .setTitle('Enregistrement de l\'UID');
@@ -118,19 +118,35 @@ function setUidModal() {
         // The label is the prompt the user sees for this input
         .setLabel("Ton pseudo sur Genshin")
         // Short means only a single line of text
-        .setStyle(TextInputStyle.Short);
+        .setStyle(TextInputStyle.Short)
+        .setMinLength(0)
+        .setMaxLength(30);
 
     const uidInput = new TextInputBuilder()
         .setCustomId('setUidNumber')
         .setLabel("Ton UID Genshin")
         // Paragraph means multiple lines of text.
-        .setStyle(TextInputStyle.Short);
+        .setStyle(TextInputStyle.Short)
+        .setMinLength(0)
+        .setMaxLength(9);
 
-    // An action row only holds one text input,
-    // so you need one action row per text input.
+    /*************************************/
+    /******** AUTOCOMPLETE VALUES ********/
+    /*************************************/
+    if (typeof interaction === 'object' && interaction.hasOwnProperty('user')) {
+        if (typeof interaction.user.id !== 'undefined') {
+            let cacheKey = 'get-uid' + interaction.user.id;
+            let userData = await getUserUidData(cacheKey, interaction.user)
+            if (typeof userData.data.uid !== 'undefined'
+                && typeof userData.data.name !== 'undefined') {
+                nicknameInput.setValue(userData.data.name.toString())
+                uidInput.setValue(userData.data.uid.toString())
+            }
+        }
+    }
+
     const firstActionRow = new ActionRowBuilder().addComponents(nicknameInput);
     const secondActionRow = new ActionRowBuilder().addComponents(uidInput);
-
-    // Add inputs to the modal
-    return modal.addComponents(firstActionRow, secondActionRow);
+    modal.addComponents(firstActionRow, secondActionRow);
+    return modal;
 }
