@@ -136,11 +136,19 @@ async function setUidModal(interaction) {
     if (typeof interaction === 'object' && interaction.hasOwnProperty('user')) {
         if (typeof interaction.user.id !== 'undefined') {
             let cacheKey = 'get-uid' + interaction.user.id;
-            let userData = await getUserUidData(cacheKey, interaction.user)
-            if (typeof userData.data.uid !== 'undefined'
-                && typeof userData.data.name !== 'undefined') {
-                nicknameInput.setValue(userData.data.name.toString())
-                uidInput.setValue(userData.data.uid.toString())
+            try {
+                let userData = await getUserUidData(cacheKey, interaction.user)
+                if (typeof userData !== 'undefined' && userData.hasOwnProperty('data')) {
+                    let data = userData.data
+                    if (data.hasOwnProperty('uid') && data.hasOwnProperty('name')
+                        && typeof data.uid !== 'undefined'
+                        && typeof data.name !== 'undefined') {
+                        nicknameInput.setValue(userData.data.name.toString())
+                        uidInput.setValue(userData.data.uid.toString())
+                    }
+                }
+            } catch (e) {
+                console.error(e);
             }
         }
     }
