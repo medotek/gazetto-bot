@@ -23,24 +23,28 @@ export const SetUidCommand = new SlashCommandBuilder()
  * @constructor
  */
 export const FicheCommand = (characters, roles) => {
-    if (typeof characters === "object" && Object.keys(characters).length) {
-        /***************************/
-        /****** MISE EN CACHE ******/
-        /***************************/
+    if (characters && typeof characters === "object" && Object.keys(characters).length) {
+        /*********************************/
+        /********* MISE EN CACHE *********/
+        /*********************************/
         let cacheKey = 'ficheCharacters';
         let charactersArr = []
         for (const [key, character] of Object.entries(characters)) {
-            if (typeof character.name !== 'undefined' && character.name) {
-                let formattedCharacterName = character.name.toLowerCase();
-                if (formattedCharacterName.match(/\S/g).length < 6) {
-                    formattedCharacterName = formattedCharacterName.replace(/\s/g, "");
-                }
-                charactersArr.push({name: formattedCharacterName, id: character.id})
+            if (typeof character.name === 'undefined' || !character.name) {
+                continue
             }
+
+            let formattedCharacterName = character.name.toLowerCase();
+            if (formattedCharacterName.match(/\S/g).length < 6) {
+                formattedCharacterName = formattedCharacterName.replace(/\s/g, "");
+            }
+            charactersArr.push({name: formattedCharacterName, id: character.id})
         }
 
         Cache.set(cacheKey, charactersArr)
-
+        /*********************************/
+        /****** END - MISE EN CACHE ******/
+        /*********************************/
 
         return new SlashCommandBuilder()
             .setName('fiche')

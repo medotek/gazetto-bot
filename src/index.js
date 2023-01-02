@@ -5,11 +5,14 @@ config()
 import {ActivityType, Client, GatewayIntentBits, Partials} from 'discord.js'
 const client = new Client({intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel]});
 // Import commands
-import {Commands} from './src/Components/commands.js'
-import {deployCommands} from "./src/Scripts/deploy-commands.js";
-import {sequelize} from "./src/Services/DatabaseService.js";
-// DB connection
+import {Commands} from './Components/commands.js'
+import {deployCommands} from "./Scripts/deploy-commands.js";
+import {sequelize} from "./Services/DatabaseService.js";
 
+/**
+ * Start a DB instance
+ * @returns {Promise<{message: string, status: string}>}
+ */
 const app = async () =>  {
     try {
         await sequelize.authenticate()
