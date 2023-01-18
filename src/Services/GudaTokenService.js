@@ -1,5 +1,6 @@
 import {request} from 'undici'
 import {config} from 'dotenv'
+
 config()
 
 /**
@@ -28,21 +29,25 @@ export class GudaTokenService {
     }
 
     async setBearerToken() {
-        const { statusCode, headers, trailers, body } = await this.getCredentials()
-        if (statusCode === 200) {
-            this.gudapiToken = await body.json().then(r => {
-                if (r.token !== undefined && r.token) {
-                    this.setLastTimeUpdate()
-                    return r.token
-                } else {
+        try {
+            const {statusCode, headers, trailers, body} = await this.getCredentials()
+            if (statusCode === 200) {
+                this.gudapiToken = await body.json().then(r => {
+                    if (r.token !== undefined && r.token) {
+                        this.setLastTimeUpdate()
+                        return r.token
+                    } else {
+                        return null
+                    }
+                }).catch(err => {
                     return null
-                }
-            }).catch(err => {
-                return null
-            })
-        } else {
-            // TODO : log message on discord
-            this.gudapiToken = null
+                })
+            } else {
+                // TODO : log message on discord
+                this.gudapiToken = null
+            }
+        } catch (e) {
+            console.error(e)
         }
     }
 
