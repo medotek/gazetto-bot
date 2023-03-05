@@ -8,7 +8,7 @@ export async function Uid(sequelize, commandName, interaction) {
      * SET UID COMMAND
      */
     let response = {
-        message: 'An error occurred, medo help!'
+            message: 'An error occurred, medo help!'
     };
 
     if (commandName === 'set-uid') {

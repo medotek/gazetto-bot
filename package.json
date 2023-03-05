@@ -13,7 +13,7 @@
     "node-cache": "^5.1.2",
     "sequelize": "^6.21.2",
     "sqlite3": "^5.0.8",
-    "undici": "^5.10.0"
+    "undici": "^5.20.0"
   },
   "name": "gazetto-bot",
   "version": "1.0.0",

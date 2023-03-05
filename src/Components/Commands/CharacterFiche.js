@@ -5,6 +5,7 @@ import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
 import {navigationActionEmbedBuilder} from "../../Builder/Commands/NavigationActionEmbedBuilder.js";
 import MiniSearch from 'minisearch'
 import {config} from 'dotenv'
+import {accentsTidy} from "../../Tools/index.js";
 
 config()
 
@@ -41,10 +42,7 @@ export async function CharacterFiche(commandName, interaction) {
         let charactersArr = []
         if (charactersRequest && typeof charactersRequest === "object") {
             for (const [key, character] of Object.entries(charactersRequest)) {
-                let formattedCharacterName = character.name.toLowerCase();
-                if (formattedCharacterName.match(/\S/g).length < 6) {
-                    formattedCharacterName = formattedCharacterName.replace(/\s/g, "");
-                }
+                let formattedCharacterName = accentsTidy(character.name)
                 charactersArr.push({name: formattedCharacterName, id: character.id})
             }
             Cache.set(charactersFicheKey, charactersArr)
@@ -68,106 +66,98 @@ export async function CharacterFiche(commandName, interaction) {
         // Add array for search index
         miniSearch.addAll(characters)
 
-        if (characterSearchTerm && typeof characterSearchTerm === "object" && characterSearchTerm.hasOwnProperty('value')) {
-            let formattedCharacterName = characterSearchTerm.value.toLowerCase().replace(/[^a-zA-Z0-9]/g, "");
-            if (formattedCharacterName.length > 2) {
-                if (formattedCharacterName.match(/\S/g).length < 6) {
-                    formattedCharacterName = formattedCharacterName.replace(/\s/g, "");
-                }
-                let result = miniSearch.search(formattedCharacterName)
-                if (result.length) {
-                    if (result.length === 1) {
-                        if (result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
-                            let roles = null;
-                            // Optional condition
-                            if (role && typeof role === "object" && role.hasOwnProperty('value') && role.value) {
-                                roles = JSON.stringify({'role': role.value})
+        let isValid = true;
+        if (!characterSearchTerm || typeof characterSearchTerm !== "object" || !characterSearchTerm.hasOwnProperty('value')) isValid = false;
+        let formattedCharacterName = accentsTidy(characterSearchTerm.value)
+        if (formattedCharacterName.length > 2) {
+            let result = miniSearch.search(formattedCharacterName)
+            // if (result.length) {
+            if (result.length === 1 && result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
+                let roles = null;
+                // Optional condition
+                if (role && typeof role === "object" && role.hasOwnProperty('value') && role.value) roles = JSON.stringify({'role': role.value});
+                // TODO : découpage
+                let characterFiches = await getCharacterFiche(result[0].id, roles)
+                if (characterFiches && typeof role === "object" && characterFiches.hasOwnProperty('result') && typeof characterFiches.result === "object") {
+                    // TODO : watch
+                    replyObj.content = null;
+                    if (characterFiches.result && Object.keys(characterFiches.result).length) {
+                        // Multiple fiches
+                        if (Object.keys(characterFiches.result).length > 1) {
+                            let cacheKey = "userId" + interaction.user.id + "interactionId" + interaction.id
+                            let actionCharacterFiches = {
+                                current: 0, // Current key start at 0
+                                data: characterFiches.result
                             }
-
-                            // TODO : découpage
-                            let characterFiches = await getCharacterFiche(result[0].id, roles)
-                            if (characterFiches && typeof role === "object" && characterFiches.hasOwnProperty('result') && typeof characterFiches.result === "object") {
-                                // TODO : watch
-                                replyObj.content = null;
-                                if (characterFiches.result && Object.keys(characterFiches.result).length) {
-                                    // Multiple fiches
-                                    if (Object.keys(characterFiches.result).length > 1) {
-                                        let cacheKey = "userId" + interaction.user.id + "interactionId" + interaction.id
-                                        let actionCharacterFiches = {
-                                            current: 0, // Current key start at 0
-                                            data: characterFiches.result
-                                        }
-                                        try {
-                                            // Set cache for navigation actions
-                                            Cache.set(cacheKey, actionCharacterFiches)
-                                            let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
-                                            let navEmbed = null;
-                                            let hasTwoObjs = null;
-                                            if (Object.keys(characterFiches.result).length === 2) {
-                                                // Display a second embed to show prev/next elements
-                                                navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed, 'next')
-                                                hasTwoObjs = true;
-                                            } else {
-                                                // Display a second embed to show prev/next elements
-                                                navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed)
-                                            }
-                                            let row = null
-                                            if (hasTwoObjs) {
-                                                row = new ActionRowBuilder()
-                                                    .addComponents(
-                                                        new ButtonBuilder()
-                                                            .setCustomId('characterFicheNext_' + interaction.id)
-                                                            .setLabel('Suivant ➡')
-                                                            .setStyle(ButtonStyle.Primary),
-                                                    );
-                                            } else {
-                                                row = new ActionRowBuilder()
-                                                    .addComponents(
-                                                        new ButtonBuilder()
-                                                            .setCustomId('characterFichePrev_' + interaction.id)
-                                                            .setLabel('⬅ Précédent')
-                                                            .setStyle(ButtonStyle.Primary),
-                                                        new ButtonBuilder()
-                                                            .setCustomId('characterFicheNext_' + interaction.id)
-                                                            .setLabel('Suivant ➡')
-                                                            .setStyle(ButtonStyle.Primary),
-                                                    );
-                                            }
-
-                                            if (navEmbed) {
-                                                embeds.push(navEmbed)
-                                                // Action Row
-                                                replyObj.components = [row]
-                                            } else {
-                                                embeds.push(ficheEmbed)
-                                            }
-                                        } catch (e) {
-                                            // TODO : log
-                                            console.log(e)
-                                        }
-                                    } else if (Object.keys(characterFiches.result).length === 1) {
-                                        let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
-                                        ficheEmbed ? embeds.push(ficheEmbed) : replyObj.content = "Le personnage ne possède pas de fiches"
-                                    }
+                            try {
+                                // Set cache for navigation actions
+                                Cache.set(cacheKey, actionCharacterFiches)
+                                let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
+                                let navEmbed = null;
+                                let hasTwoObjs = null;
+                                if (Object.keys(characterFiches.result).length === 2) {
+                                    // Display a second embed to show prev/next elements
+                                    navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed, 'next')
+                                    hasTwoObjs = true;
                                 } else {
-                                    replyObj.content = "Le personnage ne possède pas de fiche";
+                                    // Display a second embed to show prev/next elements
+                                    navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed)
                                 }
+                                let row = null
+                                if (hasTwoObjs) {
+                                    row = new ActionRowBuilder()
+                                        .addComponents(
+                                            new ButtonBuilder()
+                                                .setCustomId('characterFicheNext_' + interaction.id)
+                                                .setLabel('Suivant ➡')
+                                                .setStyle(ButtonStyle.Primary),
+                                        );
+                                } else {
+                                    row = new ActionRowBuilder()
+                                        .addComponents(
+                                            new ButtonBuilder()
+                                                .setCustomId('characterFichePrev_' + interaction.id)
+                                                .setLabel('⬅ Précédent')
+                                                .setStyle(ButtonStyle.Primary),
+                                            new ButtonBuilder()
+                                                .setCustomId('characterFicheNext_' + interaction.id)
+                                                .setLabel('Suivant ➡')
+                                                .setStyle(ButtonStyle.Primary),
+                                        );
+                                }
+
+                                if (navEmbed) {
+                                    embeds.push(navEmbed)
+                                    // Action Row
+                                    replyObj.components = [row]
+                                } else {
+                                    embeds.push(ficheEmbed)
+                                }
+                            } catch (e) {
+                                // TODO : log
+                                console.log(e)
                             }
+                        } else if (Object.keys(characterFiches.result).length === 1) {
+                            let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
+                            ficheEmbed ? embeds.push(ficheEmbed) : replyObj.content = "Le personnage ne possède pas de fiches"
                         }
                     } else {
-                        // for multiple (characters) results
-                        // for (const [key, res] of Object.entries(result)) {
-                        //     console.log(res)
-                        // }
-                        // TODO : if multiple result, return a format for those possibilities
-                        replyObj.content = "Aucun personnage ne correspond à la recherche"
+                        replyObj.content = "Le personnage ne possède pas de fiche";
                     }
-                } else {
-                    replyObj.content = "Aucun personnage ne correspond à la recherche"
                 }
+                // } else {
+                //     // for multiple (characters) results
+                //     // for (const [key, res] of Object.entries(result)) {
+                //     //     console.log(res)
+                //     // }
+                //     // TODO : if multiple result, return a format for those possibilities
+                //     replyObj.content = "Aucun personnage ne correspond à la recherche"
+                // }
             } else {
-                replyObj.content = "Veuillez effectuer une recherche comprenant au minimum 3 lettres"
+                replyObj.content = "Aucun personnage ne correspond à la recherche"
             }
+        } else {
+            replyObj.content = "Veuillez effectuer une recherche comprenant au minimum 3 lettres"
         }
     }
 

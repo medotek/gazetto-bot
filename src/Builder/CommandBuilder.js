@@ -1,5 +1,6 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {Cache} from "../Module/Cache.js";
+import {accentsTidy} from "../Tools/index.js";
 
 export const GetUidCommand = new SlashCommandBuilder()
     .setName('get-uid')
@@ -34,10 +35,7 @@ export const FicheCommand = (characters, roles) => {
                 continue
             }
 
-            let formattedCharacterName = character.name.toLowerCase();
-            if (formattedCharacterName.match(/\S/g).length < 6) {
-                formattedCharacterName = formattedCharacterName.replace(/\s/g, "");
-            }
+            let formattedCharacterName = accentsTidy(character.name)
             charactersArr.push({name: formattedCharacterName, id: character.id})
         }
 
