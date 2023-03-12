@@ -58,7 +58,7 @@ export async function CharacterFiche(commandName, interaction) {
         fields: ['name'],
         storeFields: ['name', 'id'],
         searchOptions: {
-            fuzzy: 0.2
+            fuzzy: 0.1
         }
     })
 
