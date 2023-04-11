@@ -35,7 +35,7 @@ export async function Uid(sequelize, commandName, interaction) {
         // Get data from database
         let embed = null;
         if (response.data) {
-            embed = userUidEmbedBuilder(response.data, targetUser.user)
+            embed = await userUidEmbedBuilder(response.data, targetUser.user)
         }
         replyObject.content = response.message
         if (response.status !== 'error') ephemeralStatus = false;
@@ -59,7 +59,7 @@ export async function GetUidFromUserMenuContext(interaction) {
             // Gestion du cache
             response = await getUserUidData(cacheKey, user)
             if (response.data) {
-                embed = userUidEmbedBuilder(response.data, user)
+                embed = await userUidEmbedBuilder(response.data, user)
             }
             if (embed) {
                 replyObj.embeds = [embed]

@@ -1,6 +1,10 @@
 import {EmbedBuilder} from "discord.js";
 import {config} from 'dotenv'
 import {formattedRoles, roleFieldBuilder} from "../../Components/Utils/CommandHelper.js";
+import {EnkaClient} from "enka-network-api";
+import {createCanvas, loadImage, Image} from "canvas";
+import {writeFileSync} from 'fs';
+
 config()
 
 /**
@@ -29,7 +33,7 @@ export const characterFicheEmbedBuilder = (characterFiche, iteration = null) => 
                 .toLowerCase()
                 .trim()
                 .replaceAll(' ', '-')
-            + (iteration ? '#'+iteration : '')
+            + (iteration ? '#' + iteration : '')
         )
         .setDescription(null)
         .setColor(0xf2d77c)
@@ -50,24 +54,50 @@ export const characterFicheEmbedBuilder = (characterFiche, iteration = null) => 
  * @param user
  * @returns {boolean|EmbedBuilder}
  */
-export function userUidEmbedBuilder(data, user) {
+export async function userUidEmbedBuilder(data, user) {
     if (typeof data !== "object" || typeof user !== "object") {
         return false
     }
 
-    return new EmbedBuilder()
+    const enka = new EnkaClient()
+    let enkaUser = await enka.fetchUser(data.uid)
+    let embed = new EmbedBuilder()
         .setColor(0xf2d77c)
-        .setDescription(`<:Primogemmes:913866333848997958> **Profil Genshin Impact de ${user}** \n ㅤ`)
+        .setTitle(`Profil Genshin Impact de ${user.username}`)
+        .setDescription(`<:Primogemmes:913866333848997958> ${enkaUser.signature}`)
         .addFields(
-            {name: 'Pseudo', value: `${data.name}`, inline: true},
+            {name: 'Pseudo', value: enkaUser.nickname, inline: true},
             {name: 'UID', value: `${data.uid}`, inline: true},
-            {
-                name: 'Vitrine de personnages',
-                value: `[Voir sur enka.network](https://enka.network/u/${data.uid})`,
-                inline: false
-            },
+            {name: '**-**', value: ' ', inline: false},
+            {name: 'Niveau', value: `${enkaUser.level}`, inline: true},
+            {name: 'Monde', value: `${enkaUser.worldLevel}`, inline: true},
+            {name: '**-**', value: ' ', inline: false},
+            {name: 'Personnages', value: ' ', inline: false},
         )
-        .setThumbnail(user.displayAvatarURL())
+        .setURL(enkaUser.url)
+        // user.displayAvatarURL
+        .setThumbnail(enkaUser.profilePictureCharacter.icon.url)
+        .setFooter({text: 'Powered by Enka.Network'})
+    // .setImage()
+
+    enkaUser.characters.forEach(function (character) {
+        embed.addFields({
+            name: character.characterData.name.get('fr'),
+            value: `Lv.${character.level}, C${character.unlockedConstellations.length}`,
+            inline: true
+        })
+    })
+
+    // let characterPic = enkaUser.profileCard.pictures.filter(picture => picture.name === 'UI_NameCardPic_Tighnari_P')
+    //
+    // let rendering = await render(characterPic[0].url, data.uid, enkaUser.profilePictureCharacter.icon.url)
+    // if (rendering)
+    //     embed.setImage(`./assets/card/${data.uid}.png`)
+
+    return embed
 }
 
 
+
+    return true;
+}
