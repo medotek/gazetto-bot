@@ -11,8 +11,8 @@
     "minisearch": "^5.0.0",
     "mysql2": "^2.3.3",
     "node-cache": "^5.1.2",
-    "sequelize": "^6.21.2",
-    "sqlite3": "^5.0.8",
+    "sequelize": "^6.28.*",
+    "sqlite3": "^5.1.*",
     "undici": "^5.20.0"
   },
   "name": "gazetto-bot",
