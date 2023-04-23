@@ -2,9 +2,11 @@ import {EmbedBuilder} from "@discordjs/builders";
 import {getCharacters} from "../../Request/Command/CharactersFiche.js";
 import {Cache} from "../../Module/Cache.js";
 import {helpCharactersListEmbedBuilder} from "../../Builder/Commands/HelpCharactersListEmbedBuilder.js";
-import {ActionRowBuilder, SelectMenuBuilder} from "discord.js";
+import {ActionRowBuilder, StringSelectMenuBuilder} from "discord.js";
+import {mentionSlashCommand} from "../../Tools/index.js";
 
 export async function helpCommand(interaction) {
+    console.log(interaction)
     const {commandName} = interaction
     let embeds = []
     // If not in chan, ephemeral as true
@@ -15,17 +17,17 @@ export async function helpCommand(interaction) {
             .setColor(0xfff187)
             .addFields(
                 {
-                    "name": `🔹/set-uid`,
+                    "name": `🔹${await mentionSlashCommand("set-uid", interaction.guildId)}`,
                     "value": `Enregistrer son UID`,
                     "inline": true
                 },
                 {
-                    "name": `🔹/get-uid`,
+                    "name": `🔹${await mentionSlashCommand("get-uid", interaction.guildId)}`,
                     "value": `Afficher un UID (le sien ou celui d'autrui)`,
                     "inline": true
                 },
                 {
-                    "name": `📰/fiche`,
+                    "name": `📰${await mentionSlashCommand("fiche", interaction.guildId)}`,
                     "value": `Recherche de fiche par personnage (et role)`
                 }
             )
@@ -76,7 +78,7 @@ export async function helpCommand(interaction) {
             if (embed) embeds.push(embed)
 
             // Add select menu action row
-            let selectMenuBuilder = new SelectMenuBuilder()
+            let selectMenuBuilder = new StringSelectMenuBuilder()
                 .setCustomId('select')
                 .setPlaceholder('Choisissez un élément');
 

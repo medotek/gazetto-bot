@@ -46,9 +46,6 @@ app().then(async r => {
     } else {
         console.log(r.message)
     }
-    //
-    // // GENSHIN KIT Setup
-    // genshin.loginWithCookie(process.env.COOKIE).setServerType('os').setServerLocale('fr-fr');
 
     // Commands
     await (async () => {
