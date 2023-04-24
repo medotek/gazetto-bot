@@ -7,6 +7,12 @@ export const GuildCommand = (sequelize) => {
         name: DataTypes.STRING,
         applicationId: DataTypes.BIGINT
     }, {
+        indexes: [
+            {
+                unique: true,
+                fields: ['guildId', 'commandId', 'applicationId']
+            }
+        ],
         timestamps: false
     });
 }

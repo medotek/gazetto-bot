@@ -9,8 +9,10 @@ export const GuildCommandProvider = async (commandName, guildId, commandId = nul
         if (commandId && applicationId) {
             const [guildCommand, created] = await GuildCommand(sequelize).findOrCreate({
                 where: {
-                    guildId: applicationId,
-                    commandId: commandId
+                    guildId: guildId,
+                    commandId: commandId,
+                    applicationId: applicationId,
+                    name: commandName
                 },
                 defaults: {
                     guildId: guildId,
