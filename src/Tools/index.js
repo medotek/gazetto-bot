@@ -22,7 +22,12 @@ export async function mentionSlashCommand(commandName, guildId) {
     let commandId = await Cache.retrieve(`${commandName}_${guildId}`);
 
     // Caching guild command id
-    await GuildCommandProvider(commandName, guildId);
+    if (!commandId) {
+        let command = await GuildCommandProvider(commandName, guildId);
+
+        (command && command.hasOwnProperty('commandId') && command.commandId) ?
+            commandId = command.commandId : ''
+    }
 
     return commandId ?
         `</${commandName}:${commandId}>`
