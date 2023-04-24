@@ -1,4 +1,5 @@
 import {Cache} from "../Module/Cache.js";
+import {GuildCommandProvider} from "../DataProvider/GuildCommandProvider.js";
 
 export function accentsTidy(s) {
     var r = s.toLowerCase();
@@ -19,6 +20,9 @@ export function accentsTidy(s) {
 
 export async function mentionSlashCommand(commandName, guildId) {
     let commandId = await Cache.retrieve(`${commandName}_${guildId}`);
+
+    // Caching guild command id
+    await GuildCommandProvider(commandName, guildId);
 
     return commandId ?
         `</${commandName}:${commandId}>`

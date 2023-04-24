@@ -10,7 +10,7 @@ import {User} from '../Models/User.js'
  * @returns {Promise<{message: string, status: string}>}
  * @constructor
  */
-export const UserDataProvider = async (crudAction, sequelize, discordUser, uuid = undefined, name = undefined) => {
+export const UserProvider = async (crudAction, sequelize, discordUser, uuid = undefined, name = undefined) => {
     if ((!name && crudAction !== 'read')
         || (!uuid && crudAction !== 'read')
         || !crudAction) {

@@ -6,7 +6,6 @@ import {ActionRowBuilder, StringSelectMenuBuilder} from "discord.js";
 import {mentionSlashCommand} from "../../Tools/index.js";
 
 export async function helpCommand(interaction) {
-    console.log(interaction)
     const {commandName} = interaction
     let embeds = []
     // If not in chan, ephemeral as true

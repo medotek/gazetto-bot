@@ -4,7 +4,7 @@ import {config} from "dotenv";
 import {FicheCommand, GetUidCommand, SetUidCommand} from "../Builder/CommandBuilder.js";
 import {getCharacters, getRoles} from "../Request/Command/CharactersFiche.js";
 import {GetUidFromUserMenuContextCommand, HelpCommand} from "../Components/Commands/MiscellaneousCommands.js";
-import {Cache} from "../Module/Cache.js";
+import {GuildCommandProvider} from "../DataProvider/GuildCommandProvider.js";
 
 config();
 
@@ -34,21 +34,20 @@ export async function deployCommands() {
  * Caching command id
  * @param {array} commands
  */
-function cachingCommandId(commands) {
+async function cachingCommandId(commands) {
     if (typeof commands !== 'object' || !Array.isArray(commands) || !commands.length) return console.error(commands)
 
-    commands.forEach(command => {
+    for (const command of commands) {
         try {
             if (command.name === 'fiche'
-                    || command.name === 'get-uid'
-                    || command.name === 'set-uid'
+                || command.name === 'get-uid'
+                || command.name === 'set-uid'
             ) {
-                Cache.set(`${command.name}_${command.guild_id}`, command.id)
+                await GuildCommandProvider(command.name, command.guild_id, command.id, command.application_id)
             }
         } catch (e) {
             // TODO : log
             console.log(e)
         }
-
-    })
+    }
 }

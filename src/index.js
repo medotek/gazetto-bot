@@ -49,7 +49,7 @@ app().then(async r => {
 
     // Commands
     await (async () => {
-        await sequelize.sync({force: true});
+        await sequelize.sync({force: false});
         await Commands(client, sequelize)
     })();
 

@@ -1,5 +1,5 @@
 import {Cache} from "../../../Module/Cache.js";
-import {UserDataProvider} from "../../../DataProvider/UserDataProvider.js";
+import {UserProvider} from "../../../DataProvider/UserProvider.js";
 import {sequelize} from "../../../Services/DatabaseService.js";
 
 export async function getUserUidData(cacheKey, targetUser) {
@@ -7,7 +7,7 @@ export async function getUserUidData(cacheKey, targetUser) {
     if (Cache.has(cacheKey) && await Cache.retrieve(cacheKey) !== null) {
         response.data = await Cache.retrieve(cacheKey);
     } else {
-        response = await UserDataProvider('read', sequelize, targetUser)
+        response = await UserProvider('read', sequelize, targetUser)
         if (typeof response.data === "object"
             && response.data !== undefined
             && Object.keys(response.data).length) {

@@ -4,7 +4,7 @@ import {CharacterFiche} from "./Commands/CharacterFiche.js";
 import {ficheNavigationButtons} from "./Commands/Actions/FicheNavigationButtons.js";
 import {helpCommand} from "./Commands/HelpCommand.js";
 import {selectElementHelpCommandActions} from "./Commands/Actions/SelectElementHelpCommandActions.js";
-import {UserDataProvider} from "../DataProvider/UserDataProvider.js";
+import {UserProvider} from "../DataProvider/UserProvider.js";
 import {Cache} from '../Module/Cache.js'
 
 export const Commands = (client, sequelize) => {
@@ -58,7 +58,7 @@ export const Commands = (client, sequelize) => {
                 const pseudo = interaction.fields.getTextInputValue('setUidNickname');
                 const uid = interaction.fields.getTextInputValue('setUidNumber');
                 if (pseudo && uid) {
-                    response = await UserDataProvider('update', sequelize, user, uid, pseudo.replace(/[^a-zA-Z0-9]/g, ""))
+                    response = await UserProvider('update', sequelize, user, uid, pseudo.replace(/[^a-zA-Z0-9]/g, ""))
                 }
                 // Clear cache if exists
                 let cacheKey = 'get-uid' + user.id
