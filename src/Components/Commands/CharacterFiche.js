@@ -36,7 +36,7 @@ export async function CharacterFiche(commandName, interaction) {
     }
 
     let charactersFicheKey = "ficheCharacters"
-    const characters = await Cache.retrieve(charactersFicheKey)
+    let characters = await Cache.retrieve(charactersFicheKey);
     if (!characters || typeof characters !== "object") {
         let charactersRequest = await getCharacters()
         let charactersArr = []
@@ -46,6 +46,7 @@ export async function CharacterFiche(commandName, interaction) {
                 charactersArr.push({name: formattedCharacterName, id: character.id})
             }
             Cache.set(charactersFicheKey, charactersArr)
+            characters = charactersArr;
         }
     }
 
