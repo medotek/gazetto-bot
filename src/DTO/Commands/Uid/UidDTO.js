@@ -13,5 +13,5 @@ export async function UidDTO(interaction, response) {
         if (uid) response = await userData.setGameUid(uid, game)
     }
 
-    await interaction.reply({content: response.message, ephemeral: true})
+    await interaction.reply({content: response.message ?? response.content, ephemeral: true})
 }

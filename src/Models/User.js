@@ -6,8 +6,13 @@ export const User = (sequelize) => {
             primaryKey: true,
             type: DataTypes.INTEGER
         },
-        uid: DataTypes.INTEGER,
-        game: DataTypes.STRING,
+        uid: {
+            type: DataTypes.INTEGER
+        },
+        game: {
+            type: DataTypes.STRING,
+            primaryKey: true,
+        }
     }, {
         timestamps: false
     });

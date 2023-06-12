@@ -55,6 +55,13 @@ export async function Uid(sequelize, commandName, interaction) {
     }
 }
 
+/**
+ * Need a fix
+ * @deprecated
+ * @param interaction
+ * @return {Promise<*>}
+ * @constructor
+ */
 export async function GetUidFromUserMenuContext(interaction) {
     let replyObj = {
         ephemeral: true

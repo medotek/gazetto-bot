@@ -67,8 +67,7 @@ export async function userUidEmbedBuilder(data, user, game = Game.Genshin) {
     }
 
     if (!gameData) return false
-
-    game = Game.Genshin ? 'Genshin Impact' : 'Honkai Star Rail'
+    game = (game === Game.Genshin ? 'Genshin Impact' : 'Honkai Star Rail')
 
     let embed = new EmbedBuilder()
         .setColor(0xf2d77c)

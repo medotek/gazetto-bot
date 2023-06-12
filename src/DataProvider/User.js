@@ -59,18 +59,18 @@ export default class UserDataProvider {
         }
 
         let response = {}
-        let data = {uid: uid, game: game}
+        let data = {userId: this._discordUser.id, uid: uid, game: game}
 
         try {
             // Find or create the user
             const [user, created] = await User(sequelize).findOrCreate({
-                where: {userId: this._discordUser.id, game: game},
+                where: {userId: this._discordUser.id, uid: uid, game: game},
                 defaults: data
             })
 
             if (!created) {
                 // Don't update when there is no diff
-                if (user.uid === uid && user.game === game) {
+                if (user.id ===  this._discordUser.id && user.uid === uid && user.game === game) {
                     response = {
                         status: 'error',
                         message: 'Les informations sont déjà les mêmes !'
@@ -83,8 +83,7 @@ export default class UserDataProvider {
                 )
 
                 // First el => 1 query
-                if (userUpdate.uid === uid && userUpdate.game === game
-                ) {
+                if (userUpdate.uid === uid && userUpdate.game === game) {
                     response = {
                         status: 'updated',
                         message: 'Vos informations ont été mis à jour !'
@@ -124,6 +123,7 @@ export default class UserDataProvider {
         let response = {}
         let cacheKey = `${game}_${this._discordUser.id}`
 
+        console.log(cacheKey)
         try {
             let data = await Cache.retrieve(cacheKey)
             if (!data) {
