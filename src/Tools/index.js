@@ -1,5 +1,7 @@
 import {Cache} from "../Module/Cache.js";
 import {GuildCommandProvider} from "../DataProvider/GuildCommandProvider.js";
+import {config} from 'dotenv';
+config();
 
 export function accentsTidy(s) {
     var r = s.toLowerCase();
@@ -26,10 +28,23 @@ export async function mentionSlashCommand(commandName, guildId) {
         let command = await GuildCommandProvider(commandName, guildId);
 
         (command && command.hasOwnProperty('commandId') && command.commandId) ?
-            commandId = command.commandId : ''
+            commandId = command.commandId
+            : ''
     }
 
     return commandId ?
         `</${commandName}:${commandId}>`
         : `/${commandName}`
+}
+
+export const starRailResourceUrl = (endpoint) => {
+    return process.env.STAR_RAIL_RES + endpoint
+}
+
+/**
+ * game id enum
+ */
+export const Game = {
+    Genshin: 'genshin',
+    StarRail: 'star-rail'
 }

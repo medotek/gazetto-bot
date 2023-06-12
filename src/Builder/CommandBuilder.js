@@ -1,6 +1,6 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {Cache} from "../Module/Cache.js";
-import {accentsTidy} from "../Tools/index.js";
+import {accentsTidy, Game} from "../Tools/index.js";
 
 export const GetUidCommand = new SlashCommandBuilder()
     .setName('get-uid')
@@ -10,20 +10,39 @@ export const GetUidCommand = new SlashCommandBuilder()
             .setName('user')
             .setDescription("Choissez l'utilisateur discord pour afficher son uid")
             .setRequired(true),
+    )
+    .addStringOption(option =>
+        option.setName("game")
+            .setDescription('Choisissez le jeux')
+            .setRequired(true)
+            .addChoices(
+                { name: 'Genshin', value: Game.Genshin },
+                { name: 'Honkai Star Rail', value: Game.StarRail }
+            )
     );
 
 
 export const SetUidCommand = new SlashCommandBuilder()
     .setName('set-uid')
-    .setDescription('Enregistre ton uid');
+    .setDescription('Enregistre ton uid')
+    .addStringOption(option =>
+        option.setName("game")
+        .setDescription('Choisissez le jeux')
+        .setRequired(true)
+        .addChoices(
+            { name: 'Genshin', value: 'genshin' },
+            { name: 'Honkai Star Rail', value: 'star-rail' }
+        )
+    );
 
 /**
  * Create FicheCommand
  * @param characters
  * @param roles
- * @constructor
  */
 export const FicheCommand = (characters, roles) => {
+    // TODO : autocomplete
+    //  - https://discordjs.guide/slash-commands/autocomplete.html#responding-to-autocomplete-interactions
     if (characters && typeof characters === "object" && Object.keys(characters).length) {
         /*********************************/
         /********* MISE EN CACHE *********/

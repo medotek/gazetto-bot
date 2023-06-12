@@ -7,26 +7,26 @@ export const GuildCommandProvider = async (commandName, guildId, commandId = nul
         let model = null;
         /** CREATE **/
         if (commandId && applicationId) {
+
+            let data = {
+                guildId: guildId,
+                commandId: commandId,
+                applicationId: applicationId,
+                name: commandName
+            }
+
             const [guildCommand, created] = await GuildCommand(sequelize).findOrCreate({
-                where: {
-                    guildId: guildId,
-                    commandId: commandId,
-                    applicationId: applicationId,
-                    name: commandName
-                },
-                defaults: {
-                    guildId: guildId,
-                    commandId: commandId,
-                    applicationId: applicationId,
-                    name: commandName
-                }
+                where: data,
+                defaults: data
             })
 
             if (created) {
                 Cache.set(`${commandName}_${guildId}`, commandId)
                 model = guildCommand
             }
+
         } else {
+
             /** RETRIEVE **/
             let cachedGuildCommandId = await Cache.retrieve(`${commandName}_${guildId}`, commandId)
             let whereQuery = {}
@@ -45,6 +45,7 @@ export const GuildCommandProvider = async (commandName, guildId, commandId = nul
                 Cache.set(`${guildCommand.name}_${guildCommand.guildId}`, guildCommand.commandId)
                 model = guildCommand
             }
+
         }
 
         return model

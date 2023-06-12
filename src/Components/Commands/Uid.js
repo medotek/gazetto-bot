@@ -1,7 +1,8 @@
 import {InteractionType, TextInputStyle} from "discord-api-types/v10";
-import {getUserUidData} from "../../DTO/Commands/Uid/UserFromCacheDTO.js";
 import {userUidEmbedBuilder} from "../../Builder/Commands/EmbedBuilder.js";
 import {ActionRowBuilder, ModalBuilder, TextInputBuilder} from "discord.js";
+import UserDataProvider from "../../DataProvider/User.js";
+import {Game} from "../../Tools/index.js";
 
 export async function Uid(sequelize, commandName, interaction) {
     /**
@@ -23,24 +24,32 @@ export async function Uid(sequelize, commandName, interaction) {
      * GET UID COMMAND
      */
     if (commandName === 'get-uid') {
-        if (await allowChannels(interaction)) {
+        if (await allowChannels(interaction))
             return;
-        }
+
         let ephemeralStatus = true;
-        let replyObject = {}
-        let targetUser = interaction.options._hoistedOptions[0]
-        // Gestion du cache
-        let cacheKey = 'get-uid' + targetUser.user.id;
-        response = await getUserUidData(cacheKey, targetUser.user)
-        // Get data from database
+        let replyObject = {content: "Error thrown in get-uid command"}
+        let targetUser = interaction.options.getUser('user')
+        let game = interaction.options.getString('game')
         let embed = null;
-        if (response.data) {
-            embed = await userUidEmbedBuilder(response.data, targetUser.user)
+
+        if (!game)
+            return await interaction.reply(replyObject)
+
+        // Provide user data
+        let userData = new UserDataProvider(targetUser)
+        response = await userData.getGameUid(game)
+
+        // Build data for embedding in discord
+        if (response && response.data) {
+            embed = await userUidEmbedBuilder(response.data, targetUser, game)
+            embed ? replyObject.embeds = [embed] : ephemeralStatus = true
+            delete(replyObject.content);
         }
-        replyObject.content = response.message
-        if (response.status !== 'error') ephemeralStatus = false;
-        if (embed) replyObject.embeds = [embed]
-        else ephemeralStatus = true;
+
+        if (response.status !== 'error')
+            ephemeralStatus = false;
+
         replyObject.ephemeral = ephemeralStatus
         await interaction.reply(replyObject)
     }
@@ -57,6 +66,8 @@ export async function GetUidFromUserMenuContext(interaction) {
         if (user && typeof user === "object") {
             let cacheKey = 'get-uid' + interaction.targetId
             // Gestion du cache
+            // TODO : invalid func
+            //  Reply ephemeral response + add buttons for genshin or honkai profile
             response = await getUserUidData(cacheKey, user)
             if (response.data) {
                 embed = await userUidEmbedBuilder(response.data, user)
@@ -79,15 +90,15 @@ export async function GetUidFromUserMenuContext(interaction) {
 
 
 /**
+ * Handle permission
  * @param interaction
  * @returns {Promise<boolean>}
  */
 async function allowChannels(interaction) {
     let channelsId = process.env.GUDA_UID_ALLOWED_CHANNELS_ID
     let notAllowed = true;
-    let channels = null
-    if (channelsId) {
-        channels = channelsId.split(',')
+    let channels = channelsId.split(',')
+    if (channelsId && channels.length) {
         channels.forEach(channel => {
             if (channel === interaction.channelId) {
                 notAllowed = false;
@@ -109,22 +120,16 @@ async function allowChannels(interaction) {
 }
 
 async function setUidModal(interaction) {
-    const modal = new ModalBuilder()
-        .setCustomId('setUidModal')
-        .setTitle('Enregistrement de l\'UID');
+    let game = interaction.options.getString('game');
+    if (!game) throw new Error('No game found');
 
-    const nicknameInput = new TextInputBuilder()
-        .setCustomId('setUidNickname')
-        // The label is the prompt the user sees for this input
-        .setLabel("Ton pseudo sur Genshin")
-        // Short means only a single line of text
-        .setStyle(TextInputStyle.Short)
-        .setMinLength(0)
-        .setMaxLength(30);
+    const modal = new ModalBuilder()
+        .setCustomId(`setUidModal_${game}`)
+        .setTitle('Enregistrement de l\'UID');
 
     const uidInput = new TextInputBuilder()
         .setCustomId('setUidNumber')
-        .setLabel("Ton UID Genshin")
+        .setLabel("Ton UID " + (game === Game.Genshin ? "Genshin" : "Star Rail"))
         // Paragraph means multiple lines of text.
         .setStyle(TextInputStyle.Short)
         .setMinLength(0)
@@ -133,17 +138,17 @@ async function setUidModal(interaction) {
     /*************************************/
     /******** AUTOCOMPLETE VALUES ********/
     /*************************************/
-    if (typeof interaction === 'object' && interaction.hasOwnProperty('user')) {
+    if (typeof interaction === 'object' && interaction.hasOwnProperty('user') && interaction.options.getString('game')) {
         if (typeof interaction.user.id !== 'undefined') {
-            let cacheKey = 'get-uid' + interaction.user.id;
             try {
-                let userData = await getUserUidData(cacheKey, interaction.user)
+                let userData = await (new UserDataProvider(interaction.user))
+                    .getGameUid(interaction.options.getString('game'))
+
                 if (typeof userData !== 'undefined' && userData.hasOwnProperty('data')) {
                     let data = userData.data
-                    if (data.hasOwnProperty('uid') && data.hasOwnProperty('name')
+                    if (data && data.hasOwnProperty('uid') && data.hasOwnProperty('name')
                         && typeof data.uid !== 'undefined'
                         && typeof data.name !== 'undefined') {
-                        nicknameInput.setValue(userData.data.name.toString())
                         uidInput.setValue(userData.data.uid.toString())
                     }
                 }
@@ -153,8 +158,7 @@ async function setUidModal(interaction) {
         }
     }
 
-    const firstActionRow = new ActionRowBuilder().addComponents(nicknameInput);
-    const secondActionRow = new ActionRowBuilder().addComponents(uidInput);
-    modal.addComponents(firstActionRow, secondActionRow);
-    return modal;
+    return modal.addComponents(
+        new ActionRowBuilder().addComponents(uidInput)
+    );
 }

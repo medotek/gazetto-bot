@@ -7,7 +7,7 @@ export async function selectElementHelpCommandActions(interaction) {
 
     let interactionUpdate = {}
     let embeds = interaction.message.embeds;
-    let newComponents = interaction.message.components
+    // let newComponents = interaction.message.components
 
     if (interaction.user.id === interaction.message.interaction.user.id) {
         // Remove last embed - character element embed

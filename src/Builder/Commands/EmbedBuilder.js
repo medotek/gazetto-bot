@@ -1,9 +1,8 @@
 import {EmbedBuilder} from "discord.js";
 import {config} from 'dotenv'
 import {formattedRoles, roleFieldBuilder} from "../../Components/Utils/CommandHelper.js";
-import {EnkaClient} from "enka-network-api";
-import {createCanvas, loadImage, Image} from "canvas";
-import {writeFileSync} from 'fs';
+import {Game} from "../../Tools/index.js";
+import gameDataProviderInstance from "../../DataProvider/Game.js";
 
 config()
 
@@ -52,52 +51,47 @@ export const characterFicheEmbedBuilder = (characterFiche, iteration = null) => 
 /***
  * @param data
  * @param user
+ * @param game
  * @returns {boolean|EmbedBuilder}
  */
-export async function userUidEmbedBuilder(data, user) {
+export async function userUidEmbedBuilder(data, user, game = Game.Genshin) {
     if (typeof data !== "object" || typeof user !== "object") {
         return false
     }
 
-    const enka = new EnkaClient()
-    let enkaUser = await enka.fetchUser(data.uid)
+    let gameData;
+    if (game === Game.Genshin) {
+        gameData = await gameDataProviderInstance.genshinData(data.uid)
+    } else {
+        gameData = await gameDataProviderInstance.starRailData(data.uid)
+    }
+
+    if (!gameData) return false
+
+    game = Game.Genshin ? 'Genshin Impact' : 'Honkai Star Rail'
+
     let embed = new EmbedBuilder()
         .setColor(0xf2d77c)
-        .setTitle(`Profil Genshin Impact de ${user.username}`)
-        .setDescription(`<:Primogemmes:913866333848997958> ${enkaUser.signature}`)
+        .setTitle(`Profil ${game} de ${user.username}`)
+        .setDescription((game === Game.Genshin ? "<:Primogemmes:913866333848997958> " : "") + gameData.signature)
         .addFields(
-            {name: 'Pseudo', value: enkaUser.nickname, inline: true},
-            {name: 'UID', value: `${data.uid}`, inline: true},
+            {name: 'Pseudo', value: gameData.nickname, inline: true},
+            {name: 'UID', value: "``"+data.uid+"``", inline: true},
             {name: '**-**', value: ' ', inline: false},
-            {name: 'Niveau', value: `${enkaUser.level}`, inline: true},
-            {name: 'Monde', value: `${enkaUser.worldLevel}`, inline: true},
+            {name: 'Niveau', value: `${gameData.level}`, inline: true},
+            {name: (game === Game.Genshin ? 'Monde' : 'Equilibre'), value: `${gameData.worldLevel}`, inline: true},
             {name: '**-**', value: ' ', inline: false},
             {name: 'Personnages', value: ' ', inline: false},
         )
-        .setURL(enkaUser.url)
+        .setURL(gameData.url)
         // user.displayAvatarURL
-        .setThumbnail(enkaUser.profilePictureCharacter.icon.url)
-        .setFooter({text: 'Powered by Enka.Network'})
+        .setThumbnail(gameData.profilePictureCharacter)
+        .setFooter({text: 'Powered by ' + (game === Game.Genshin ? 'Enka.Network' : 'Medo')})
     // .setImage()
 
-    enkaUser.characters.forEach(function (character) {
-        embed.addFields({
-            name: character.characterData.name.get('fr'),
-            value: `Lv.${character.level}, C${character.unlockedConstellations.length}`,
-            inline: true
-        })
+    gameData.characters.forEach(function (character) {
+        embed.addFields(character)
     })
 
-    // let characterPic = enkaUser.profileCard.pictures.filter(picture => picture.name === 'UI_NameCardPic_Tighnari_P')
-    //
-    // let rendering = await render(characterPic[0].url, data.uid, enkaUser.profilePictureCharacter.icon.url)
-    // if (rendering)
-    //     embed.setImage(`./assets/card/${data.uid}.png`)
-
     return embed
-}
-
-
-
-    return true;
 }
