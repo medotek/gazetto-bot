@@ -47,7 +47,7 @@ export async function Uid(sequelize, commandName, interaction) {
             delete(replyObject.content);
         }
 
-        if (response.status !== 'error')
+        if (response.status !== 'error' && replyObject.embeds)
             ephemeralStatus = false;
 
         replyObject.ephemeral = ephemeralStatus
