@@ -67,12 +67,10 @@ export async function userUidEmbedBuilder(data, user, game = Game.Genshin) {
     }
 
     if (!gameData) return false
-    game = (game === Game.Genshin ? 'Genshin Impact' : 'Honkai Star Rail')
-
+    let description = (game === Game.Genshin ? "<:Primogemmes:913866333848997958> " : "") + gameData.signature;
     let embed = new EmbedBuilder()
         .setColor(0xf2d77c)
-        .setTitle(`Profil ${game} de ${user.username}`)
-        .setDescription((game === Game.Genshin ? "<:Primogemmes:913866333848997958> " : "") + gameData.signature)
+        .setTitle("Profil " + (game === Game.Genshin ? 'Genshin Impact' : 'Honkai Star Rail') + " de "+user.username)
         .addFields(
             {name: 'Pseudo', value: gameData.nickname, inline: true},
             {name: 'UID', value: "``"+data.uid+"``", inline: true},
@@ -83,11 +81,11 @@ export async function userUidEmbedBuilder(data, user, game = Game.Genshin) {
             {name: 'Personnages', value: ' ', inline: false},
         )
         .setURL(gameData.url)
-        // user.displayAvatarURL
         .setThumbnail(gameData.profilePictureCharacter)
         .setFooter({text: 'Powered by ' + (game === Game.Genshin ? 'Enka.Network' : 'Medo')})
-    // .setImage()
 
+    if (description)
+        embed.setDescription(description)
     gameData.characters.forEach(function (character) {
         embed.addFields(character)
     })

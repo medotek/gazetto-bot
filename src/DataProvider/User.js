@@ -64,7 +64,7 @@ export default class UserDataProvider {
         try {
             // Find or create the user
             const [user, created] = await User(sequelize).findOrCreate({
-                where: {userId: this._discordUser.id, uid: uid, game: game},
+                where: {userId: this._discordUser.id, game: game},
                 defaults: data
             })
 
