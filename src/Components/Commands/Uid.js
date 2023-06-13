@@ -28,7 +28,7 @@ export async function Uid(sequelize, commandName, interaction) {
             return;
 
         let ephemeralStatus = true;
-        let replyObject = {content: "Error thrown in get-uid command"}
+        let replyObject = {content: "Enregistre ton uid avec la commande /set-uid", ephemeral: true}
         let targetUser = interaction.options.getUser('user')
         let game = interaction.options.getString('game')
         let embed = null;
