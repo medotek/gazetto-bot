@@ -9,16 +9,14 @@ import {GuildCommandProvider} from "../DataProvider/GuildCommandProvider.js";
 config();
 
 export async function deployCommands() {
-    // Gudapi - Get characters from fiches
-    let characters = await getCharacters()
     let roles = await getRoles()
     const commands = [
         GetUidCommand.toJSON(),
         SetUidCommand.toJSON(),
         HelpCommand.toJSON(),
-        GetUidFromUserMenuContextCommand
+        // GetUidFromUserMenuContextCommand
     ];
-    let ficheCommand = FicheCommand(characters, roles)
+    let ficheCommand = FicheCommand(roles)
     ficheCommand ? commands.push(ficheCommand) : console.error('Fiche command not available');
     const rest = new REST({version: '10'}).setToken(process.env.TOKEN);
     rest.put(

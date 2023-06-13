@@ -5,10 +5,10 @@ import {ficheNavigationButtons} from "./Commands/Actions/FicheNavigationButtons.
 import {helpCommand} from "./Commands/HelpCommand.js";
 import {selectElementHelpCommandActions} from "./Commands/Actions/SelectElementHelpCommandActions.js";
 import {UidDTO} from "../DTO/Commands/Uid/UidDTO.js";
+import {commandAutocomplete} from "../Handle/Interaction/Aucomplete.js";
 
 export const Commands = (client, sequelize) => {
     client.on('interactionCreate', async interaction => {
-
         let response = {
             message: 'An error occurred, medo help!'
         };
@@ -52,6 +52,14 @@ export const Commands = (client, sequelize) => {
         /***********************************/
         if (interaction.isModalSubmit()) {
             await UidDTO(interaction, response)
+        }
+
+        /***********************************/
+        /*********** AUTOCOMPLETE **********/
+        /***********************************/
+        if (interaction.isAutocomplete()) {
+            // TODO : default - get the most searched characters
+            await commandAutocomplete(interaction)
         }
     })
 }

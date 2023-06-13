@@ -123,7 +123,6 @@ export default class UserDataProvider {
         let response = {}
         let cacheKey = `${game}_${this._discordUser.id}`
 
-        console.log(cacheKey)
         try {
             let data = await Cache.retrieve(cacheKey)
             if (!data) {
