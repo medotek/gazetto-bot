@@ -91,7 +91,7 @@ async function handleCharacterSearch(interaction) {
 
 async function findCharacterFiche(interaction, result, role = null) {
     // TODO : if multiple entries, make the user to choose
-    if (result.length === 1 && typeof result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
+    if (result && result.length === 1 && typeof result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
         let roles = null;
 
         // Optional condition
