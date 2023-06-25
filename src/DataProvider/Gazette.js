@@ -1,5 +1,5 @@
 import {config} from 'dotenv';
-import {accentsTidy} from "../Tools/index.js";
+import {accentsTidy, filterArrayByPattern} from "../Tools/index.js";
 import {Cache} from "../Module/Cache.js";
 import {getCharacters} from "../Request/Command/CharactersFiche.js";
 
@@ -38,6 +38,31 @@ class GazetteDataProvider {
         }
 
         return await Cache.retrieve(cacheKey)
+    }
+
+    async cachedSearchedKeyword(keyword, data) {
+        let cacheKey = 'searchedKeyword'
+        let cachedSearchKeyword;
+
+        if (Cache.has(cacheKey)) {
+            cachedSearchKeyword = await Cache.retrieve(cacheKey)
+        } else {
+            cachedSearchKeyword = []
+        }
+
+        // verify if the keyword is cached
+        if (typeof cachedSearchKeyword[keyword] === 'undefined') {
+            // filter data
+            cachedSearchKeyword[keyword] = filterArrayByPattern(data
+                .map(character => {
+                    return {name: character.name, value: character.id.toString()}
+                }), keyword.split("\\s+").join("|"))
+            // Cache the updated searchedKeyword
+            Cache.set(cacheKey, cachedSearchKeyword)
+        }
+
+        // return accessible key value
+        return cachedSearchKeyword[keyword]
     }
 }
 

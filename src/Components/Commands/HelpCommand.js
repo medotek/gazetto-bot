@@ -49,6 +49,7 @@ export async function helpCommand(interaction) {
             ephemeral: ephemeral
         }
 
+        // TODO : refacto
         // each embed represent an element
         let cacheKey = 'charactersListHelpCommand'
         let charactersList = await Cache.retrieve(cacheKey)

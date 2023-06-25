@@ -8,11 +8,11 @@ export async function commandAutocomplete(interaction) {
     if (searchText && characters.length) {
         searchText = accentsTidy(searchText, true)
         // return character name & value in an array
-        let filter = filterArrayByPattern(characters
-            .map(character => { return { name: character.name, value: character.id.toString() } }), searchText.split("\\s+").join("|"))
-
-        // if the filter has less than 25 entries, the return (discord constraint)
-        filter.length <= 25 ? options = filter : ''
+        let filter = await gazetteDataProviderInstance.cachedSearchedKeyword(searchText, characters)
+        // if the filter has less than 25 entries, then return (discord constraint)
+        if (filter && filter.length <= 25) {
+            options = filter
+        }
     }
 
     interaction.respond(options);
