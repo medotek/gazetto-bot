@@ -58,7 +58,7 @@ class GameDataProvider {
                     level: response.player.level,
                     worldLevel: response.player.world_level,
                     signature: response.player.signature,
-                    url: "https://api.rails-express.com/api/u/" + uid,
+                    url: "https://rails-express.com/api/u/" + uid,
                     profilePictureCharacter: starRailResourceUrl(response.player.avatar.icon),
                     characters: response.characters.map(character => {
                             return {
