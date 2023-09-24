@@ -43,8 +43,13 @@ export async function Uid(sequelize, commandName, interaction) {
         // Build data for embedding in discord
         if (response && response.data) {
             embed = await userUidEmbedBuilder(response.data, targetUser, game)
-            embed ? replyObject.embeds = [embed] : ephemeralStatus = true
-            delete(replyObject.content);
+            if (embed) {
+                replyObject.embeds = [embed];
+                delete(replyObject.content);
+            } else {
+                ephemeralStatus = true
+                replyObject.content = 'Une erreur est survenue'
+            }
         }
 
         if (response.status !== 'error' && replyObject.embeds)

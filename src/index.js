@@ -8,6 +8,7 @@ const client = new Client({intents: [GatewayIntentBits.Guilds], partials: [Parti
 import {Commands} from './Components/commands.js'
 import {deployCommands} from "./Scripts/deploy-commands.js";
 import {sequelize} from "./Services/DatabaseService.js";
+import {EnkaClient} from "enka-network-api";
 
 /**
  * Start a DB instance
@@ -43,6 +44,18 @@ app().then(async r => {
             console.log('Kibo is ready')
         });
 
+        /**
+         * Update cached data
+         *
+         * @type {EnkaClient}
+         */
+        const enka = new EnkaClient()
+        if ( await enka.cachedAssetsManager.checkForUpdates()) {
+            await enka.cachedAssetsManager.fetchAllContents()
+        }
+
+        // Set auto cache updater
+        await enka.cachedAssetsManager.activateAutoCacheUpdater()
     } else {
         console.log(r.message)
     }
