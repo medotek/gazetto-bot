@@ -28,7 +28,7 @@ class GameDataProvider {
                 worldLevel: enkaUser.worldLevel,
                 signature: enkaUser.signature,
                 url: enkaUser.url,
-                profilePictureCharacter: enkaUser.profilePictureCharacter.icon.url,
+                profilePictureCharacter: enkaUser.profilePictureCharacter?.icon?.url,
                 characters: enkaUser.characters.map(character => {
                         return {
                             name: character.characterData.name.get('fr'),
