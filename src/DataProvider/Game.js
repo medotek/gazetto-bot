@@ -1,7 +1,7 @@
-import {EnkaClient} from "enka-network-api";
 import {config} from 'dotenv';
 import {request} from "undici";
 import {starRailResourceUrl} from "../Tools/index.js";
+import {starRailClient} from "../index.js";
 
 config();
 
@@ -18,8 +18,8 @@ class GameDataProvider {
 
     async genshinData(uid) {
         try {
-            const enka = new EnkaClient()
-            let enkaUser = await enka.fetchUser(uid)
+            let enkaUser = await starRailClient.fetchUser(uid)
+            console.log(enkaUser);return;
             if (!enkaUser) return null
 
             return {

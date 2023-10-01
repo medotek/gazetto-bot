@@ -9,6 +9,45 @@ import {Commands} from './Components/commands.js'
 import {deployCommands} from "./Scripts/deploy-commands.js";
 import {sequelize} from "./Services/DatabaseService.js";
 import {EnkaClient} from "enka-network-api";
+import {StarRail} from "starrail.js";
+
+/**
+ * Update cached data
+ *
+ * @type {StarRail}
+ */
+export const starRailClient = new StarRail({ cacheDirectory: "./cache/star-rail" });
+starRailClient.cachedAssetsManager.activateAutoCacheUpdater({
+    instant: true, // Run the first update check immediately
+    timeout: 60 * 60 * 1000, // 1 hour interval
+    onUpdateStart: async () => {
+        console.log("Updating Star Rail Data...");
+    },
+    onUpdateEnd: async () => {
+        starRailClient.cachedAssetsManager.refreshAllData(); // Refresh memory
+        console.log("[STAR RAIL] Updating Completed!");
+    }
+});
+
+
+/**
+ * Update cached data
+ *
+ * @type {EnkaClient}
+ */
+export const genshinClient = new EnkaClient({ cacheDirectory: "./cache/genshin" })
+await genshinClient.cachedAssetsManager.activateAutoCacheUpdater({
+    instant: true, // Run the first update check immediately
+    timeout: 60 * 60 * 1000, // 1 hour interval
+    onUpdateStart: async () => {
+        console.log("Updating Genshin  Data...");
+    },
+    onUpdateEnd: async () => {
+        starRailClient.cachedAssetsManager.refreshAllData(); // Refresh memory
+        console.log("[GENSHIN] Updating Completed!");
+    }
+})
+
 
 /**
  * Start a DB instance
@@ -43,19 +82,6 @@ app().then(async r => {
         client.once('ready', () => {
             console.log('Kibo is ready')
         });
-
-        /**
-         * Update cached data
-         *
-         * @type {EnkaClient}
-         */
-        const enka = new EnkaClient()
-        if ( await enka.cachedAssetsManager.checkForUpdates()) {
-            await enka.cachedAssetsManager.fetchAllContents()
-        }
-
-        // Set auto cache updater
-        await enka.cachedAssetsManager.activateAutoCacheUpdater()
     } else {
         console.log(r.message)
     }

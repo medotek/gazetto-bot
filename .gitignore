@@ -4,3 +4,6 @@ package-lock.json
 .env*
 .idea/
 /test
+cache/star-rail/*
+cache/genshin/*
+!.gitkeep
