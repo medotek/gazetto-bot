@@ -1,7 +1,7 @@
 import {config} from 'dotenv';
 import {request} from "undici";
 import {starRailResourceUrl} from "../Tools/index.js";
-import {starRailClient} from "../index.js";
+import {genshinClient, starRailClient} from "../index.js";
 
 config();
 
@@ -18,8 +18,7 @@ class GameDataProvider {
 
     async genshinData(uid) {
         try {
-            let enkaUser = await starRailClient.fetchUser(uid)
-            console.log(enkaUser);return;
+            let enkaUser = await genshinClient.fetchUser(uid)
             if (!enkaUser) return null
 
             return {
@@ -58,7 +57,7 @@ class GameDataProvider {
                     level: response.player.level,
                     worldLevel: response.player.world_level,
                     signature: response.player.signature,
-                    url: "https://rails-express.com/u/" + uid,
+                    url: "https://enka.network/hsr/" + uid,
                     profilePictureCharacter: starRailResourceUrl(response.player.avatar.icon),
                     characters: response.characters.map(character => {
                             return {

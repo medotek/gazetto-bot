@@ -84,7 +84,7 @@ export async function userUidEmbedBuilder(data, user, game = Game.Genshin) {
         .setFooter({text: 'Powered by ' + (game === Game.Genshin ? 'Enka.Network' : 'Medo')})
 
     if (gameData.profilePictureCharacter)
-        description.setThumbnail(gameData.profilePictureCharacter)
+        embed.setThumbnail(gameData.profilePictureCharacter)
     if (description)
         embed.setDescription(description)
     gameData.characters.forEach(function (character) {
