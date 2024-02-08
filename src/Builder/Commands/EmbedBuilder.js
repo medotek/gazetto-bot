@@ -93,3 +93,26 @@ export async function userUidEmbedBuilder(data, user, game = Game.Genshin) {
 
     return embed
 }
+
+export const weaponFicheEmbed = (weaponData) =>  {
+    let rarityColor = {
+        '5' : 0xffd966,
+        '4' : 0x8e7cc3,
+        '3' : 0x6fa8dc,
+    }
+
+     let embed = new EmbedBuilder()
+        .setTitle(`[ARMES] ${weaponData.name}`)
+         // TODO : ancrer vers les personnages
+        .addFields(
+            {name: "Type", value: weaponData.weaponType.name, inline: false},
+            {name: 'Rareté', value: weaponData.rarity.toString(), inline: false}
+        )
+        .setImage(process.env.GUDASHBOARD_BASE_IMG_URL + weaponData.fiche)
+        .setColor(rarityColor[weaponData.rarity.toString()])
+
+    if (weaponData.image)
+        embed.setThumbnail(weaponData.image)
+
+    return embed;
+}

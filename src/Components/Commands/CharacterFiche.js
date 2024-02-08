@@ -1,11 +1,11 @@
 import {Cache} from '../../Module/Cache.js'
 import {getCharacterFiche} from "../../Request/Command/CharactersFiche.js";
 import {characterFicheEmbedBuilder} from "../../Builder/Commands/EmbedBuilder.js";
-import {ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder} from "discord.js";
 import {navigationActionEmbedBuilder} from "../../Builder/Commands/NavigationActionEmbedBuilder.js";
 import MiniSearch from 'minisearch'
 import {config} from 'dotenv'
-import {accentsTidy} from "../../Tools/index.js";
+import {accentsTidy, rarityStar} from "../../Tools/index.js";
 import gazetteDataProviderInstance from "../../DataProvider/Gazette.js";
 
 config()
@@ -38,7 +38,6 @@ export async function CharacterFiche(commandName, interaction) {
 
     let replyObj = {content: "Une erreur est survenue"}
     let isAutocomplete = !!parseInt(interaction.options.getString('personnage'))
-    let role = interaction.options.get('role')
     let result;
     if (isAutocomplete) {
         result = [{id: parseInt(interaction.options.getString('personnage'))}]
@@ -46,7 +45,7 @@ export async function CharacterFiche(commandName, interaction) {
         result = await handleCharacterSearch(interaction)
     }
 
-    let characterFiche = await findCharacterFiche(interaction, result, role)
+    let characterFiche = await findCharacterFiche(interaction, result)
 
     if (characterFiche) {
         if (typeof characterFiche === 'string')
@@ -89,20 +88,20 @@ async function handleCharacterSearch(interaction) {
     return false;
 }
 
-async function findCharacterFiche(interaction, result, role = null) {
+async function findCharacterFiche(interaction, result) {
     // TODO : if multiple entries, make the user to choose
     if (result && result.length === 1 && typeof result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
-        let roles = null;
+        let response = {};
+        let weapons = null;
 
-        // Optional condition
-        if (role && typeof role === "object" && role.hasOwnProperty('value') && role.value)
-            roles = JSON.stringify({'role': role.value});
-
-        let characterFiches = await getCharacterFiche(result[0].id, roles)
-        if (!characterFiches || typeof role !== "object" || !characterFiches.hasOwnProperty('result') || typeof characterFiches.result !== "object")
+        let characterFiches = await getCharacterFiche(result[0].id)
+        if (!characterFiches || !characterFiches.hasOwnProperty('result') || typeof characterFiches.result !== "object")
             return "Aucun personnage ne correspond à la recherche";
         if (!characterFiches || (characterFiches.hasOwnProperty('result') && !characterFiches.result) || !Object.keys(characterFiches.result).length)
             return "Le personnage ne possède pas de fiches";
+
+        // Set weapons
+        weapons = characterFiches.result[0].weapons
 
         // Multiple fiches
         if (Object.keys(characterFiches.result).length > 1) {
@@ -111,12 +110,15 @@ async function findCharacterFiche(interaction, result, role = null) {
                 current: 0, // Current key start at 0
                 data: characterFiches.result
             }
+
             try {
                 // Set cache for navigation actions
                 Cache.set(cacheKey, actionCharacterFiches)
                 let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
-                let navEmbed = null;
-                let hasTwoObjs = null;
+                let navEmbed;
+                let hasTwoObjs = false;
+                let components = [];
+
                 if (Object.keys(characterFiches.result).length === 2) {
                     // Display a second embed to show prev/next elements
                     navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed, 'next')
@@ -125,17 +127,17 @@ async function findCharacterFiche(interaction, result, role = null) {
                     // Display a second embed to show prev/next elements
                     navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed)
                 }
-                let row = null
                 if (hasTwoObjs) {
-                    row = new ActionRowBuilder()
+                    components.push(new ActionRowBuilder()
                         .addComponents(
                             new ButtonBuilder()
                                 .setCustomId('characterFicheNext_' + interaction.id)
                                 .setLabel('Suivant ➡')
                                 .setStyle(ButtonStyle.Primary),
-                        );
+                        )
+                    );
                 } else {
-                    row = new ActionRowBuilder()
+                    components.push(new ActionRowBuilder()
                         .addComponents(
                             new ButtonBuilder()
                                 .setCustomId('characterFichePrev_' + interaction.id)
@@ -145,26 +147,66 @@ async function findCharacterFiche(interaction, result, role = null) {
                                 .setCustomId('characterFicheNext_' + interaction.id)
                                 .setLabel('Suivant ➡')
                                 .setStyle(ButtonStyle.Primary),
-                        );
+                        )
+                    );
                 }
 
                 if (navEmbed) {
-                    return {
-                        embeds: [navEmbed],
-                        components: [row]
-                    }
+                    response.components = components
+                    response.embeds = [navEmbed]
                 } else {
-                    return {
-                        embeds: [ficheEmbed]
-                    }
+                    response.embeds = [ficheEmbed]
                 }
             } catch (e) {
                 // TODO : log
-                console.log(e)
+                console.error(e)
             }
         } else if (Object.keys(characterFiches.result).length === 1) {
             let ficheEmbed = characterFicheEmbedBuilder(characterFiches.result[0])
-            return ficheEmbed ? {embeds: [ficheEmbed]} : "Le personnage ne possède pas de fiches"
+            response.embeds = ficheEmbed ? [ficheEmbed] : "Le personnage ne possède pas de fiches"
         }
+
+
+        if (weapons && weapons.length) {
+            if (!response.hasOwnProperty('components'))
+                response.components = []
+
+            /**
+             * Weapons sheets
+             */
+            let selectMenuBuilder = new StringSelectMenuBuilder()
+                .setCustomId('character-fiche-weapons')
+                .setPlaceholder('Armes');
+
+            // Order by rarity DESC
+            weapons.sort(function (a, b) {
+                if (a.rarity < b.rarity)
+                    return 1;
+                else if (a.rarity > b.rarity)
+                    return -1;
+                else
+                    // Si les raretés sont égales, trie par nom en ordre ascendant (ASC)
+                    if (a.name < b.name) {
+                        return -1;
+                    } else if (a.name > b.name) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+            })
+
+            weapons.forEach(weapon => {
+                console.log(weapon)
+                selectMenuBuilder.addOptions({
+                    label: `${weapon.rarity}${rarityStar(weapon.rarity)} - ${weapon.name}`,
+                    // because we remove the first el, the array has moved keys
+                    value:  weapon.id.toString(),
+                })
+            })
+
+            response.components.push(new ActionRowBuilder().addComponents(selectMenuBuilder));
+        }
+
+        return response
     }
 }

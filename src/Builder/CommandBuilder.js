@@ -51,15 +51,4 @@ export const FicheCommand = (roles) => {
                     .setAutocomplete(true)
             }
         )
-        .addStringOption((option) => {
-                let customOption = option
-                    .setName('role')
-                    .setDescription("(facultatif) Filtrer par role");
-                for (const [key, role] of Object.entries(roles)) {
-                    customOption.addChoices({name: role.name, value: `${role.name}`})
-                }
-
-                return customOption
-            }
-        )
 }

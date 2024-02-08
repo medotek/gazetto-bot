@@ -61,4 +61,13 @@ export function filterArrayByPattern(array, pattern) {
     });
 }
 
-
+export function rarityStar(rarity) {
+    switch (rarity) {
+        case 5:
+            return "🟨";
+        case 4:
+            return "🟪";
+        default:
+            return "🟦";
+    }
+}

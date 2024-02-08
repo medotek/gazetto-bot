@@ -11,12 +11,13 @@ export async function getRoles() {
     return await fetchResponse('character-fiche/get-roles')
 }
 
-export async function getCharacterFiche(characterId, roles = null) {
-    let method = "GET"
-    if (roles) method = "POST"
-    return await fetchResponse(`character-fiche/get/${characterId}`, roles, method)
+export async function getCharacterFiche(characterId) {
+    return await fetchResponse(`character-fiche/get/${characterId}`)
 }
 
+export async function getWeaponFiche(weaponId) {
+    return await fetchResponse(`character-fiche/get/${characterId}`)
+}
 /**
  *
  * @param endpoint

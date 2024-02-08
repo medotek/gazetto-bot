@@ -17,18 +17,18 @@ import {StarRail} from "starrail.js";
  * @type {StarRail}
  */
 export const starRailClient = new StarRail({ cacheDirectory: "./cache/star-rail" });
-starRailClient.cachedAssetsManager.activateAutoCacheUpdater({
-    instant: true, // Run the first update check immediately
-    timeout: 60 * 60 * 1000, // 1 hour interval
-    onUpdateStart: async () => {
-        console.log("Updating Star Rail Data...");
-    },
-    onUpdateEnd: async () => {
-        starRailClient.cachedAssetsManager.refreshAllData(); // Refresh memory
-        console.log("[STAR RAIL] Updating Completed!");
-    }
-});
-
+// await starRailClient.cachedAssetsManager.cacheDirectorySetup();
+// await starRailClient.cachedAssetsManager.activateAutoCacheUpdater({
+//     instant: true, // Run the first update check immediately
+//     timeout: 60 * 60 * 1000, // 1 hour interval
+//     onUpdateStart: async () => {
+//         console.log("Updating Star Rail Data...");
+//     },
+//     onUpdateEnd: async () => {
+//         starRailClient.cachedAssetsManager.refreshAllData(); // Refresh memory
+//         console.log("[STAR RAIL] Updating Completed!");
+//     }
+// });
 
 /**
  * Update cached data
@@ -36,17 +36,18 @@ starRailClient.cachedAssetsManager.activateAutoCacheUpdater({
  * @type {EnkaClient}
  */
 export const genshinClient = new EnkaClient({ cacheDirectory: "./cache/genshin" })
-await genshinClient.cachedAssetsManager.activateAutoCacheUpdater({
-    instant: true, // Run the first update check immediately
-    timeout: 60 * 60 * 1000, // 1 hour interval
-    onUpdateStart: async () => {
-        console.log("Updating Genshin  Data...");
-    },
-    onUpdateEnd: async () => {
-        starRailClient.cachedAssetsManager.refreshAllData(); // Refresh memory
-        console.log("[GENSHIN] Updating Completed!");
-    }
-})
+// await genshinClient.cachedAssetsManager.cacheDirectorySetup();
+// await genshinClient.cachedAssetsManager.activateAutoCacheUpdater({
+//     instant: true, // Run the first update check immediately
+//     timeout: 60 * 60 * 1000, // 1 hour interval
+//     onUpdateStart: async () => {
+//         console.log("Updating Genshin Data...");
+//     },
+//     onUpdateEnd: async () => {
+//         genshinClient.cachedAssetsManager.refreshAllData(); // Refresh memory
+//         console.log("Updating Completed!");
+//     }
+// });
 
 
 /**
