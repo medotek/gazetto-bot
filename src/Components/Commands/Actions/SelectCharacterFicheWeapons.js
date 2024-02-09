@@ -2,6 +2,7 @@ import {GudaToken} from "../../../Module/GudaToken.js";
 import {weaponFicheEmbed} from "../../../Builder/Commands/EmbedBuilder.js";
 import {ActionRowBuilder, StringSelectMenuBuilder} from "discord.js";
 import {rarityStar} from "../../../Tools/index.js";
+import {request} from "undici";
 
 export async function selectCharacterFicheWeapons(interaction) {
     if (interaction.customId !== 'character-fiche-weapons')
@@ -19,8 +20,8 @@ export async function selectCharacterFicheWeapons(interaction) {
         headers: headers
     }
 
-    let weaponResponse = await fetch(process.env.GUDASHBOARD_SWAGGER_URL + `weapons/${weaponId}`, options)
-    let weaponData = await weaponResponse.json()
+    let {body} = await request(process.env.GUDASHBOARD_SWAGGER_URL + `weapons/${weaponId}`, options)
+    let weaponData = await body.json()
     let replyContent = {}
 
     if (weaponData.hasOwnProperty('characterFiches') && weaponData.characterFiches.length) {
