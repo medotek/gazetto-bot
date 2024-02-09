@@ -7,7 +7,6 @@ export async function selectCharacterFromWeaponFiche(interaction) {
 
     let characterId = interaction.values[0]
     let replyContent = await findCharacterFiche(interaction, [{id: parseInt(characterId)}])
-    console.log(characterId)
-    console.log(replyContent)
+
     return interaction.reply(replyContent)
 }
