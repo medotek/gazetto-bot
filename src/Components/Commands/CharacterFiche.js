@@ -89,7 +89,7 @@ async function handleCharacterSearch(interaction) {
     return false;
 }
 
-async function findCharacterFiche(interaction, result) {
+export async function findCharacterFiche(interaction, result) {
     // TODO : if multiple entries, make the user to choose
     if (result && result.length === 1 && typeof result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
         let response = {};

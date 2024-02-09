@@ -2,7 +2,7 @@ import {Cache} from "../../../Module/Cache.js";
 import {helpCharactersListEmbedBuilder} from "../../../Builder/Commands/HelpCharactersListEmbedBuilder.js";
 
 export async function selectElementHelpCommandActions(interaction) {
-    if (interaction.message.interaction.commandName !== 'kibo')
+    if (interaction?.message?.interaction?.commandName !== 'kibo')
         return
 
     let interactionUpdate = {}

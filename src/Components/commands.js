@@ -7,6 +7,7 @@ import {selectElementHelpCommandActions} from "./Commands/Actions/SelectElementH
 import {UidDTO} from "../DTO/Commands/Uid/UidDTO.js";
 import {commandAutocomplete} from "../Handle/Interaction/Aucomplete.js";
 import {selectCharacterFicheWeapons} from "./Commands/Actions/SelectCharacterFicheWeapons.js";
+import {selectCharacterFromWeaponFiche} from "./Commands/Actions/SelectCharacterFromWeaponFiche.js";
 
 export const Commands = (client, sequelize) => {
     client.on('interactionCreate', async interaction => {
@@ -45,6 +46,8 @@ export const Commands = (client, sequelize) => {
                 await selectElementHelpCommandActions(interaction)
                 // Character Fiche
                 await selectCharacterFicheWeapons(interaction)
+                // weapon Fiche
+                await selectCharacterFromWeaponFiche(interaction)
             }
 
             /***********************************/
