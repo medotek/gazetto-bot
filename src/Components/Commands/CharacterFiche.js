@@ -7,6 +7,7 @@ import MiniSearch from 'minisearch'
 import {config} from 'dotenv'
 import {accentsTidy, rarityStar} from "../../Tools/index.js";
 import gazetteDataProviderInstance from "../../DataProvider/Gazette.js";
+import {weaponsSelectComponent} from "../../DTO/Commands/Weapons.js";
 
 config()
 
@@ -50,12 +51,12 @@ export async function CharacterFiche(commandName, interaction) {
     if (characterFiche) {
         if (typeof characterFiche === 'string')
             replyObj.content = characterFiche;
-        if (typeof characterFiche === 'object' && characterFiche.hasOwnProperty('embeds') &&  characterFiche.embeds.length)
+        if (typeof characterFiche === 'object' && characterFiche.hasOwnProperty('embeds') && characterFiche.embeds.length)
             replyObj.embeds = characterFiche.embeds
         if (typeof characterFiche === 'object' && characterFiche.hasOwnProperty('components') && characterFiche.components.length)
             replyObj.components = characterFiche.components
         if (replyObj.hasOwnProperty('embeds') || replyObj.hasOwnProperty('components'))
-            delete(replyObj.content)
+            delete (replyObj.content)
     }
 
     replyObj.ephemeral = !!replyObj.content
@@ -93,6 +94,7 @@ async function findCharacterFiche(interaction, result) {
     if (result && result.length === 1 && typeof result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
         let response = {};
         let weapons = null;
+        let actionRow = new ActionRowBuilder();
 
         let characterFiches = await getCharacterFiche(result[0].id)
         if (!characterFiches || !characterFiches.hasOwnProperty('result') || typeof characterFiches.result !== "object")
@@ -128,27 +130,23 @@ async function findCharacterFiche(interaction, result) {
                     navEmbed = await navigationActionEmbedBuilder(cacheKey, ficheEmbed)
                 }
                 if (hasTwoObjs) {
-                    components.push(new ActionRowBuilder()
-                        .addComponents(
-                            new ButtonBuilder()
-                                .setCustomId('characterFicheNext_' + interaction.id)
-                                .setLabel('Suivant ➡')
-                                .setStyle(ButtonStyle.Primary),
-                        )
-                    );
+                    actionRow.addComponents(
+                        new ButtonBuilder()
+                            .setCustomId('characterFicheNext_' + interaction.id)
+                            .setLabel('Suivant ➡')
+                            .setStyle(ButtonStyle.Primary),
+                    )
                 } else {
-                    components.push(new ActionRowBuilder()
-                        .addComponents(
-                            new ButtonBuilder()
-                                .setCustomId('characterFichePrev_' + interaction.id)
-                                .setLabel('⬅ Précédent')
-                                .setStyle(ButtonStyle.Primary),
-                            new ButtonBuilder()
-                                .setCustomId('characterFicheNext_' + interaction.id)
-                                .setLabel('Suivant ➡')
-                                .setStyle(ButtonStyle.Primary),
-                        )
-                    );
+                    actionRow.addComponents(
+                        new ButtonBuilder()
+                            .setCustomId('characterFichePrev_' + interaction.id)
+                            .setLabel('⬅ Précédent')
+                            .setStyle(ButtonStyle.Primary),
+                        new ButtonBuilder()
+                            .setCustomId('characterFicheNext_' + interaction.id)
+                            .setLabel('Suivant ➡')
+                            .setStyle(ButtonStyle.Primary),
+                    )
                 }
 
                 if (navEmbed) {
@@ -166,46 +164,18 @@ async function findCharacterFiche(interaction, result) {
             response.embeds = ficheEmbed ? [ficheEmbed] : "Le personnage ne possède pas de fiches"
         }
 
-
         if (weapons && weapons.length) {
-            if (!response.hasOwnProperty('components'))
-                response.components = []
+            let selectComponent = weaponsSelectComponent(weapons)
+            if (selectComponent) {
+                if (!response.hasOwnProperty('components'))
+                    response.components = []
 
-            /**
-             * Weapons sheets
-             */
-            let selectMenuBuilder = new StringSelectMenuBuilder()
-                .setCustomId('character-fiche-weapons')
-                .setPlaceholder('Armes');
-
-            // Order by rarity DESC
-            weapons.sort(function (a, b) {
-                if (a.rarity < b.rarity)
-                    return 1;
-                else if (a.rarity > b.rarity)
-                    return -1;
-                else
-                    // Si les raretés sont égales, trie par nom en ordre ascendant (ASC)
-                    if (a.name < b.name) {
-                        return -1;
-                    } else if (a.name > b.name) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-            })
-
-            weapons.forEach(weapon => {
-                console.log(weapon)
-                selectMenuBuilder.addOptions({
-                    label: `${weapon.rarity}${rarityStar(weapon.rarity)} - ${weapon.name}`,
-                    // because we remove the first el, the array has moved keys
-                    value:  weapon.id.toString(),
-                })
-            })
-
-            response.components.push(new ActionRowBuilder().addComponents(selectMenuBuilder));
+                response.components.push(new ActionRowBuilder().addComponents(selectComponent));
+            }
         }
+
+        if (actionRow.components.length)
+            response.components.push(actionRow);
 
         return response
     }

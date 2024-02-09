@@ -3,6 +3,7 @@ import {Cache} from "../../../Module/Cache.js";
 import {getNextAndPrevFichesFromTheCurrentOne} from "../../../DTO/Commands/FicheNavigationDTO.js";
 import {characterFicheEmbedBuilder} from "../../../Builder/Commands/EmbedBuilder.js";
 import {navigationActionEmbedBuilder} from "../../../Builder/Commands/NavigationActionEmbedBuilder.js";
+import {weaponsSelectComponent} from "../../../DTO/Commands/Weapons.js";
 
 export async function ficheNavigationButtons(interaction) {
     if (interaction.message.interaction.commandName !== 'fiche'
@@ -18,6 +19,7 @@ export async function ficheNavigationButtons(interaction) {
     let row;
     let navigationForTwoObjs = null;
     let hasNavigationForTwoObjs = false;
+    let characterData;
 
     // Restrict to the author of the command only
     if (interaction.user.id === interaction.message.interaction.user.id) {
@@ -26,9 +28,7 @@ export async function ficheNavigationButtons(interaction) {
         try {
 
             let {data, current} = await Cache.retrieve(cacheKey)
-
             if (data && typeof current !== 'undefined') {
-
                 const {prevEl, nextEl} = getNextAndPrevFichesFromTheCurrentOne(data, current)
                 let newEmbed = null
                 let newCurrentKey = null
@@ -68,8 +68,12 @@ export async function ficheNavigationButtons(interaction) {
                         hasError = true;
                 }
 
-                if (typeof newCurrentKey === "number")
+                if (typeof newCurrentKey === "number") {
+                    // Update set current character data
+                    characterData = data[newCurrentKey]
+                    // Cache
                     Cache.set(cacheKey, {data, current: newCurrentKey})
+                }
 
                 if (newEmbed) {
                     let navigationForTwoObjsEmbed = null
@@ -102,7 +106,15 @@ export async function ficheNavigationButtons(interaction) {
             }
 
         } else if (row && hasNavigationForTwoObjs) {
-            newComponents = [row]
+            // Preserve weapons select
+            if (typeof newComponents[0] !== 'undefined' && newComponents[0].components[0].customId === 'character-fiche-weapons')
+                if (typeof characterData === 'object' && characterData?.weapons?.length){
+                    let selectComponent = weaponsSelectComponent(characterData.weapons)
+                    if (selectComponent)
+                        newComponents = [new ActionRowBuilder().addComponents(selectComponent), row]
+                }
+            else
+                newComponents = [row]
         }
     }
 
