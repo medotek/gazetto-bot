@@ -6,8 +6,8 @@ import {navigationActionEmbedBuilder} from "../../../Builder/Commands/Navigation
 import {weaponsSelectComponent} from "../../../DTO/Commands/Weapons.js";
 
 export async function ficheNavigationButtons(interaction) {
-    if (interaction.message.interaction.commandName !== 'fiche'
-        || typeof interaction.customId === 'undefined')
+    if (interaction.message.interaction && (interaction.message.interaction.commandName !== 'fiche'
+        || typeof interaction.customId === 'undefined'))
         return
 
     let interactionUpdate = {}
@@ -20,9 +20,14 @@ export async function ficheNavigationButtons(interaction) {
     let navigationForTwoObjs = null;
     let hasNavigationForTwoObjs = false;
     let characterData;
+    let interactionUserId =
+        interaction.message.interaction ?
+            interaction.message.interaction.user.id
+            // User ID
+            : customIdArray[2]
 
     // Restrict to the author of the command only
-    if (interaction.user.id === interaction.message.interaction.user.id) {
+    if (interaction.user.id === interactionUserId) {
         let hasError = false
         let cacheKey = 'userId' + interaction.user.id + 'interactionId' + originalInteractionId
         try {
@@ -43,7 +48,7 @@ export async function ficheNavigationButtons(interaction) {
                         row = new ActionRowBuilder()
                             .addComponents(
                                 new ButtonBuilder()
-                                    .setCustomId('characterFichePrev_' + originalInteractionId)
+                                    .setCustomId(`characterFichePrev_${originalInteractionId}_${interaction.user.id}`)
                                     .setLabel('⬅ Précédent')
                                     .setStyle(ButtonStyle.Primary),
                             );
@@ -58,7 +63,7 @@ export async function ficheNavigationButtons(interaction) {
                         row = new ActionRowBuilder()
                             .addComponents(
                                 new ButtonBuilder()
-                                    .setCustomId('characterFicheNext_' + originalInteractionId)
+                                    .setCustomId(`characterFicheNext_${originalInteractionId}_${interaction.user.id}`)
                                     .setLabel('Suivant ➡')
                                     .setStyle(ButtonStyle.Primary),
                             );

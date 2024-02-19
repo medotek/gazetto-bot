@@ -132,18 +132,18 @@ export async function findCharacterFiche(interaction, result) {
                 if (hasTwoObjs) {
                     actionRow.addComponents(
                         new ButtonBuilder()
-                            .setCustomId('characterFicheNext_' + interaction.id)
+                            .setCustomId(`characterFicheNext_${interaction.id}_${interaction.user.id}`)
                             .setLabel('Suivant ➡')
                             .setStyle(ButtonStyle.Primary),
                     )
                 } else {
                     actionRow.addComponents(
                         new ButtonBuilder()
-                            .setCustomId('characterFichePrev_' + interaction.id)
+                            .setCustomId(`characterFichePrev_${interaction.id}_${interaction.user.id}`)
                             .setLabel('⬅ Précédent')
                             .setStyle(ButtonStyle.Primary),
                         new ButtonBuilder()
-                            .setCustomId('characterFicheNext_' + interaction.id)
+                            .setCustomId(`characterFicheNext_${interaction.id}_${interaction.user.id}`)
                             .setLabel('Suivant ➡')
                             .setStyle(ButtonStyle.Primary),
                     )

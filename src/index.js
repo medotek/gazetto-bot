@@ -77,12 +77,20 @@ app().then(async r => {
         await client.login(process.env.TOKEN);
 
         client.on("ready", () => {
-            client.user.setActivity("/kibo", { type: ActivityType.Watching})
+            console.log('Kibo is ready')
+
+            let activitiesTypes = [
+                ActivityType.Watching,
+                ActivityType.Competing,
+                ActivityType.Listening,
+                ActivityType.Streaming
+            ]
+
+            setInterval(function() {
+                client.user.setActivity("/kibo", {type: activitiesTypes[Math.floor(Math.random() * activitiesTypes.length)]})
+            }, 5000)
         })
 
-        client.once('ready', () => {
-            console.log('Kibo is ready')
-        });
     } else {
         console.log(r.message)
     }
