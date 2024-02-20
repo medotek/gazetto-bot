@@ -9,14 +9,13 @@ import {GuildCommandProvider} from "../DataProvider/GuildCommandProvider.js";
 config();
 
 export async function deployCommands() {
-    let roles = await getRoles()
     const commands = [
         GetUidCommand.toJSON(),
         SetUidCommand.toJSON(),
         HelpCommand.toJSON(),
         // GetUidFromUserMenuContextCommand
     ];
-    let ficheCommand = FicheCommand(roles)
+    let ficheCommand = FicheCommand()
     ficheCommand ? commands.push(ficheCommand) : console.error('Fiche command not available');
     const rest = new REST({version: '10'}).setToken(process.env.TOKEN);
     rest.put(

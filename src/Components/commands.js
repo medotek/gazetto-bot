@@ -11,7 +11,6 @@ import {selectCharacterFromWeaponFiche} from "./Commands/Actions/SelectCharacter
 
 export const Commands = (client, sequelize) => {
     client.on('interactionCreate', async interaction => {
-
         try {
 
             let response = {
@@ -71,7 +70,6 @@ export const Commands = (client, sequelize) => {
                 // TODO : default - get the most searched characters
                 await commandAutocomplete(interaction)
             }
-
         } catch (e) {
             console.log(e)
         }

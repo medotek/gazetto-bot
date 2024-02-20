@@ -13,4 +13,29 @@ export async function commandAutocomplete(interaction) {
         options = filter.slice(0, 24)
         return await interaction.respond(options);
     }
+
+    let filteredResults = randomlyFilter(characters)
+    filteredResults.sort((a, b) => b.value - a.value)
+    return await interaction.respond(filteredResults);
+}
+
+function randomlyFilter(array, numberOfResults = 25) {
+    if (numberOfResults >= array.length) {
+        return array;
+    } else {
+        const filteredResults = [];
+        const usedIndices = new Set();
+
+        while (filteredResults.length < numberOfResults) {
+            const randomIndex = Math.floor(Math.random() * array.length);
+            if (!usedIndices.has(randomIndex)) {
+                usedIndices.add(randomIndex);
+                filteredResults.push({
+                    name: array[randomIndex].name,
+                    value: array[randomIndex].id.toString()
+                });
+            }
+        }
+        return filteredResults;
+    }
 }
