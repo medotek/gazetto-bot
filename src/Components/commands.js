@@ -8,9 +8,10 @@ import {UidDTO} from "../DTO/Commands/Uid/UidDTO.js";
 import {commandAutocomplete} from "../Handle/Interaction/Aucomplete.js";
 import {selectCharacterFicheWeapons} from "./Commands/Actions/SelectCharacterFicheWeapons.js";
 import {selectCharacterFromWeaponFiche} from "./Commands/Actions/SelectCharacterFromWeaponFiche.js";
+import {Events} from "discord.js";
 
 export const Commands = (client, sequelize) => {
-    client.on('interactionCreate', async interaction => {
+    client.on(Events.InteractionCreate, async interaction => {
         try {
 
             let response = {

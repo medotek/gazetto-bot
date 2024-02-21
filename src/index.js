@@ -10,6 +10,7 @@ import {deployCommands} from "./Scripts/deploy-commands.js";
 import {sequelize} from "./Services/DatabaseService.js";
 import {EnkaClient} from "enka-network-api";
 import {StarRail} from "starrail.js";
+import gazetteDataProviderInstance from "./DataProvider/Gazette.js";
 
 /**
  * Update cached data
@@ -76,8 +77,7 @@ app().then(async r => {
 
         await client.login(process.env.TOKEN);
 
-        client.on("ready", () => {
-            console.log('Kibo is ready')
+        await client.on("ready", async () => {
 
             let activitiesTypes = [
                 ActivityType.Watching,
@@ -86,9 +86,18 @@ app().then(async r => {
                 ActivityType.Streaming
             ]
 
-            setInterval(function() {
+            setInterval(function () {
                 client.user.setActivity("/kibo", {type: activitiesTypes[Math.floor(Math.random() * activitiesTypes.length)]})
             }, 5000)
+
+            // Cache characters
+            await gazetteDataProviderInstance.charactersSheets()
+            // Refresh cache every hour
+            setInterval(async () => {
+                console.log(await gazetteDataProviderInstance.charactersSheets())
+            }, 60 * 60 * 1000)
+
+            console.log('Kibo is ready')
         })
 
     } else {

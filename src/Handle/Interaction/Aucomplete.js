@@ -2,6 +2,7 @@ import {accentsTidy, filterArrayByPattern} from "../../Tools/index.js";
 import gazetteDataProviderInstance from "../../DataProvider/Gazette.js";
 
 export async function commandAutocomplete(interaction) {
+    if (interaction.commandName !== 'fiche') return;
     let options = []
     let characters = await gazetteDataProviderInstance.charactersSheets()
     let searchText = interaction.options.getString('personnage')
@@ -14,9 +15,13 @@ export async function commandAutocomplete(interaction) {
         return await interaction.respond(options);
     }
 
-    let filteredResults = randomlyFilter(characters)
-    filteredResults.sort((a, b) => b.value - a.value)
-    return await interaction.respond(filteredResults);
+    // let filteredResults = randomlyFilter(characters)
+    return await interaction.respond(characters.map(character => {
+        return {
+            name: character.name,
+            value: character.id.toString()
+        }
+    }).reverse().slice(0, 24));
 }
 
 function randomlyFilter(array, numberOfResults = 25) {
