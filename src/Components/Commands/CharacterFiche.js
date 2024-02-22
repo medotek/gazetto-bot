@@ -12,7 +12,7 @@ import {weaponsSelectComponent} from "../../DTO/Commands/Weapons.js";
 config()
 
 export async function CharacterFiche(commandName, interaction) {
-    if (commandName !== 'fiche' && !interaction.isAutocomplete()) {
+    if (commandName !== 'fiche') {
         return;
     }
 
@@ -38,7 +38,14 @@ export async function CharacterFiche(commandName, interaction) {
     }
 
     let replyObj = {content: "Une erreur est survenue"}
-    let result = await handleCharacterSearch(interaction)
+    let isAutocomplete = !!parseInt(interaction.options.getString('personnage'))
+    let result;
+    if (isAutocomplete) {
+        result = [{id: parseInt(interaction.options.getString('personnage'))}]
+    } else {
+        result = await handleCharacterSearch(interaction)
+    }
+    
     let characterFiche = await findCharacterFiche(interaction, result)
 
     if (characterFiche) {
