@@ -97,7 +97,7 @@ app().then(async r => {
                 console.log(await gazetteDataProviderInstance.charactersSheets())
             }, 60 * 60 * 1000)
 
-            console.log('Kibo is ready')
+            console.log('Kibo is ready, hihi')
         })
 
     } else {

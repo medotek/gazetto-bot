@@ -433,10 +433,10 @@ encoding@^0.1.0, encoding@^0.1.12:
   dependencies:
     iconv-lite "^0.6.2"
 
-enka-network-api@^4.1.6:
-  version "4.1.6"
-  resolved "https://registry.npmjs.org/enka-network-api/-/enka-network-api-4.1.6.tgz"
-  integrity sha512-kSug8GzM7Hzx0izYxu7Qk8wmKE02Dk04YoHbQN0CLjXptgyhl9DUrKpxo++soJGHm8Fv2IbriF8Y8hZhyOhGSw==
+enka-network-api@^4.3:
+  version "4.3.0"
+  resolved "https://registry.npmjs.org/enka-network-api/-/enka-network-api-4.3.0.tgz"
+  integrity sha512-MdD+yulcoORs/avD/8aXXQ7tQqcqtBXCaIW3GvA09mNrRfpQWQ582aidJRB+M+ZYNU4YqMwrZsOOz4mqac/pKA==
   dependencies:
     axios "^1.4.0"
     config_file.js "^1.3.0"
@@ -1124,10 +1124,10 @@ ssri@^8.0.0, ssri@^8.0.1:
   dependencies:
     minipass "^3.1.1"
 
-starrail.js@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.npmjs.org/starrail.js/-/starrail.js-1.3.0.tgz"
-  integrity sha512-GwB4yIJnm017UagNGA8FjFtcolFhgSE3qa/0terSE0REi7Kz4bg9wkMNzQKMpy/dlmv2gPkw2GNL8ywr5PBz8A==
+starrail.js@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.npmjs.org/starrail.js/-/starrail.js-1.5.0.tgz"
+  integrity sha512-djRH+BJYZeNh89t97GS3hxWiltFBJssC+THOzcFW/iQsy7LqZOx+LZg7aiQ789gt2Ay/bGT32+VtjBEhGBQfSQ==
   dependencies:
     axios "^1.4.0"
     config_file.js "^1.2.4"
