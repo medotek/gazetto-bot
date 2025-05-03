@@ -1,7 +1,7 @@
 import {config} from 'dotenv';
 import {request} from "undici";
 import {starRailResourceUrl} from "../Tools/index.js";
-import {genshinClient, starRailClient} from "../index.js";
+import {genshinClient} from "../index.js";
 
 config();
 

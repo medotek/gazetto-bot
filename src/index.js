@@ -15,25 +15,6 @@ import gazetteDataProviderInstance from "./DataProvider/Gazette.js";
 /**
  * Update cached data
  *
- * @type {StarRail}
- */
-export const starRailClient = new StarRail({ cacheDirectory: "./cache/star-rail" });
-await starRailClient.cachedAssetsManager.cacheDirectorySetup();
-await starRailClient.cachedAssetsManager.activateAutoCacheUpdater({
-    instant: true, // Run the first update check immediately
-    timeout: 60 * 60 * 1000, // 1 hour interval
-    onUpdateStart: async () => {
-        console.log("Updating Star Rail Data...");
-    },
-    onUpdateEnd: async () => {
-        starRailClient.cachedAssetsManager.refreshAllData(); // Refresh memory
-        console.log("[STAR RAIL] Updating Completed!");
-    }
-});
-
-/**
- * Update cached data
- *
  * @type {EnkaClient}
  */
 export const genshinClient = new EnkaClient({ cacheDirectory: "./cache/genshin" })

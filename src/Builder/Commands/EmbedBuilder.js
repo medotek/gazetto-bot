@@ -70,10 +70,10 @@ export async function userUidEmbedBuilder(data, user, game = Game.Genshin) {
     let description = (game === Game.Genshin ? "<:Primogemmes:913866333848997958> " : "") + gameData.signature;
     let embed = new EmbedBuilder()
         .setColor(0xf2d77c)
-        .setTitle("Profil " + (game === Game.Genshin ? 'Genshin Impact' : 'Honkai Star Rail') + " de "+user.username)
+        .setTitle("Profil " + (game === Game.Genshin ? 'Genshin Impact' : 'Honkai Star Rail') + " de " + user.username)
         .addFields(
             {name: 'Pseudo', value: gameData.nickname, inline: true},
-            {name: 'UID', value: "``"+data.uid+"``", inline: true},
+            {name: 'UID', value: "``" + data.uid + "``", inline: true},
             {name: '**-**', value: ' ', inline: false},
             {name: 'Niveau', value: `${gameData.level}`, inline: true},
             {name: (game === Game.Genshin ? 'Monde' : 'Equilibre'), value: `${gameData.worldLevel}`, inline: true},
@@ -94,16 +94,16 @@ export async function userUidEmbedBuilder(data, user, game = Game.Genshin) {
     return embed
 }
 
-export const weaponFicheEmbed = (weaponData) =>  {
+export const weaponFicheEmbed = (weaponData) => {
     let rarityColor = {
-        '5' : 0xffd966,
-        '4' : 0x8e7cc3,
-        '3' : 0x6fa8dc,
+        '5': 0xffd966,
+        '4': 0x8e7cc3,
+        '3': 0x6fa8dc,
     }
 
-     let embed = new EmbedBuilder()
+    let embed = new EmbedBuilder()
         .setTitle(`[ARMES] ${weaponData.name}`)
-         // TODO : ancrer vers les personnages
+        // TODO : ancrer vers les personnages
         .addFields(
             {name: "Type", value: weaponData.weaponType.name, inline: false},
             {name: 'Rareté', value: weaponData.rarity.toString(), inline: false}
