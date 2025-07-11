@@ -13,8 +13,8 @@
     "node-cache": "^5.1.2",
     "sequelize": "^6.28.*",
     "sqlite3": "^5.1.*",
-    "starrail.js": "^1.5.0",
-    "undici": "7.2.3"
+    "starrail.js": "^1.9.5",
+    "undici": "7.5.0"
   },
   "name": "gazetto-bot",
   "version": "1.0.0",
