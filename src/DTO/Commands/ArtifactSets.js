@@ -7,7 +7,7 @@ export function artifactSetSelectComponent(artifacts) {
          */
         let selectMenuBuilder = new StringSelectMenuBuilder()
             .setCustomId('character-fiche-artifacts')
-            .setPlaceholder('Set d\'Artéfacts');
+            .setPlaceholder('Sets d\'Artéfacts');
 
         artifacts.forEach(set => {
             selectMenuBuilder.addOptions({
