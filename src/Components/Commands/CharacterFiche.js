@@ -8,6 +8,7 @@ import {config} from 'dotenv'
 import {accentsTidy, rarityStar} from "../../Tools/index.js";
 import gazetteDataProviderInstance from "../../DataProvider/Gazette.js";
 import {weaponsSelectComponent} from "../../DTO/Commands/Weapons.js";
+import {artifactSetSelectComponent} from "../../DTO/Commands/ArtifactSets.js";
 
 config()
 
@@ -93,7 +94,7 @@ export async function findCharacterFiche(interaction, result) {
     // TODO : if multiple entries, make the user to choose
     if (result && result.length === 1 && typeof result[0].id !== "undefined" && typeof result[0].id === "number" && result[0].id) {
         let response = {};
-        let weapons = null;
+        let weapons, artifacts = null;
         let actionRow = new ActionRowBuilder();
 
         let characterFiches = await getCharacterFiche(result[0].id)
@@ -104,6 +105,7 @@ export async function findCharacterFiche(interaction, result) {
 
         // Set weapons
         weapons = characterFiches.result[0].weapons
+        artifacts = characterFiches.result[0].artifactSets
 
         // Multiple fiches
         if (Object.keys(characterFiches.result).length > 1) {
@@ -166,6 +168,16 @@ export async function findCharacterFiche(interaction, result) {
 
         if (weapons && weapons.length) {
             let selectComponent = weaponsSelectComponent(weapons)
+            if (selectComponent) {
+                if (!response.hasOwnProperty('components'))
+                    response.components = []
+
+                response.components.push(new ActionRowBuilder().addComponents(selectComponent));
+            }
+        }
+
+        if (weapons && weapons.length) {
+            let selectComponent = artifactSetSelectComponent(artifacts)
             if (selectComponent) {
                 if (!response.hasOwnProperty('components'))
                     response.components = []

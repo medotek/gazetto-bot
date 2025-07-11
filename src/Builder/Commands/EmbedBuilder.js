@@ -116,3 +116,13 @@ export const weaponFicheEmbed = (weaponData) => {
 
     return embed;
 }
+
+export const artifactFicheEmbed = (artifactData) => {
+    return new EmbedBuilder()
+        .setTitle(`[ARTÉFACT] ${artifactData.name}`)
+        // TODO : ancrer vers les personnages
+        .addFields({name: "Set", value: artifactData.name, inline: false})
+        .setThumbnail(process.env.GUDASHBOARD_BASE_IMG_URL + artifactData.image)
+        .setImage(process.env.GUDASHBOARD_BASE_IMG_URL + artifactData.fiche)
+        .setColor(0x49fb8)
+}

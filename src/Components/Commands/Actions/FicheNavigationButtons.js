@@ -4,6 +4,7 @@ import {getNextAndPrevFichesFromTheCurrentOne} from "../../../DTO/Commands/Fiche
 import {characterFicheEmbedBuilder} from "../../../Builder/Commands/EmbedBuilder.js";
 import {navigationActionEmbedBuilder} from "../../../Builder/Commands/NavigationActionEmbedBuilder.js";
 import {weaponsSelectComponent} from "../../../DTO/Commands/Weapons.js";
+import {artifactSetSelectComponent} from "../../../DTO/Commands/ArtifactSets.js";
 
 export async function ficheNavigationButtons(interaction) {
     if (interaction.message.interaction && (interaction.message.interaction.commandName !== 'fiche'
@@ -112,14 +113,26 @@ export async function ficheNavigationButtons(interaction) {
 
         } else if (row && hasNavigationForTwoObjs) {
             // Preserve weapons select
-            if (typeof newComponents[0] !== 'undefined' && newComponents[0].components[0].customId === 'character-fiche-weapons')
-                if (typeof characterData === 'object' && characterData?.weapons?.length){
-                    let selectComponent = weaponsSelectComponent(characterData.weapons)
-                    if (selectComponent)
-                        newComponents = [new ActionRowBuilder().addComponents(selectComponent), row]
+            if (typeof newComponents[0] !== 'undefined') {
+                let selectComponent;
+
+                switch (newComponents[0].components[0].customId) {
+                    case 'character-fiche-weapons':
+                        selectComponent = weaponsSelectComponent(characterData.weapons)
+                        break;
+                    case 'character-fiche-artifacts':
+                        selectComponent = artifactSetSelectComponent(characterData.artifactSets)
+                        break;
+                    default:
+                        break;
                 }
-            else
+
+                if (selectComponent)
+                    newComponents = [new ActionRowBuilder().addComponents(selectComponent), row]
+
+            } else {
                 newComponents = [row]
+            }
         }
     }
 

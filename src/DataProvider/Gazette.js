@@ -1,7 +1,7 @@
 import {config} from 'dotenv';
 import {accentsTidy, filterArrayByPattern} from "../Tools/index.js";
 import {Cache} from "../Module/Cache.js";
-import {getCharacters} from "../Request/Command/CharactersFiche.js";
+import {getArtifacts, getCharacters} from "../Request/Command/CharactersFiche.js";
 
 config();
 

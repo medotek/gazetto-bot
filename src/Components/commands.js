@@ -9,6 +9,7 @@ import {commandAutocomplete} from "../Handle/Interaction/Aucomplete.js";
 import {selectCharacterFicheWeapons} from "./Commands/Actions/SelectCharacterFicheWeapons.js";
 import {selectCharacterFromWeaponFiche} from "./Commands/Actions/SelectCharacterFromWeaponFiche.js";
 import {Events} from "discord.js";
+import {selectCharacterFicheArtifactSets} from "./Commands/Actions/SelectCharacterFicheArtifactSets.js";
 
 export const Commands = (client, sequelize) => {
     client.on(Events.InteractionCreate, async interaction => {
@@ -48,6 +49,8 @@ export const Commands = (client, sequelize) => {
                 await selectCharacterFicheWeapons(interaction)
                 // weapon Fiche
                 await selectCharacterFromWeaponFiche(interaction)
+                // weapon Fiche
+                await selectCharacterFicheArtifactSets(interaction)
             }
 
             /***********************************/
