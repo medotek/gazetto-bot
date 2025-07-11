@@ -15,21 +15,39 @@ import gazetteDataProviderInstance from "./DataProvider/Gazette.js";
 /**
  * Update cached data
  *
+ * @type {StarRail}
+ */
+export const starRailClient = new StarRail({ cacheDirectory: "./cache/star-rail" });
+starRailClient.cachedAssetsManager.activateAutoCacheUpdater({
+    // instant: true, // Run the first update check immediately
+    timeout: 24* 60 * 60 * 1000, // 1 day interval
+    onUpdateStart: async () => {
+        console.log("Updating Star Rail Data...");
+    },
+    onUpdateEnd: async () => {
+        starRailClient.cachedAssetsManager.refreshAllData(); // Refresh memory
+        console.log("[STAR RAIL] Updating Completed!");
+    }
+});
+
+
+/**
+ * Update cached data
+ *
  * @type {EnkaClient}
  */
 export const genshinClient = new EnkaClient({ cacheDirectory: "./cache/genshin" })
-await genshinClient.cachedAssetsManager.cacheDirectorySetup();
 await genshinClient.cachedAssetsManager.activateAutoCacheUpdater({
-    instant: true, // Run the first update check immediately
-    timeout: 60 * 60 * 1000, // 1 hour interval
+    // instant: true, // Run the first update check immediately
+    timeout: 24* 60 * 60 * 1000, // 1 day interval
     onUpdateStart: async () => {
-        console.log("Updating Genshin Data...");
+        console.log("Updating Genshin  Data...");
     },
     onUpdateEnd: async () => {
-        genshinClient.cachedAssetsManager.refreshAllData(); // Refresh memory
-        console.log("Updating Completed!");
+        starRailClient.cachedAssetsManager.refreshAllData(); // Refresh memory
+        console.log("[GENSHIN] Updating Completed!");
     }
-});
+})
 
 
 /**
@@ -53,34 +71,24 @@ const app = async () =>  {
 
 app().then(async r => {
     if (r.status === 'success') {
+        // Load data in cache
+        await gazetteDataProviderInstance.charactersSheets()
+        setInterval(async () => {
+            await gazetteDataProviderInstance.charactersSheets()
+        }, 60*60*1000)
+
         // Deploy commands
         await deployCommands()
 
         await client.login(process.env.TOKEN);
 
-        await client.on("ready", async () => {
-
-            let activitiesTypes = [
-                ActivityType.Watching,
-                ActivityType.Competing,
-                ActivityType.Listening,
-                ActivityType.Streaming
-            ]
-
-            setInterval(function () {
-                client.user.setActivity("/kibo", {type: activitiesTypes[Math.floor(Math.random() * activitiesTypes.length)]})
-            }, 5000)
-
-            // Cache characters
-            await gazetteDataProviderInstance.charactersSheets()
-            // Refresh cache every hour
-            setInterval(async () => {
-                console.log(await gazetteDataProviderInstance.charactersSheets())
-            }, 60 * 60 * 1000)
-
-            console.log('Kibo is ready, hihi')
+        client.on("ready", () => {
+            client.user.setActivity("/kibo", { type: ActivityType.Watching})
         })
 
+        client.once('ready', () => {
+            console.log('Kibo is ready')
+        });
     } else {
         console.log(r.message)
     }
@@ -90,6 +98,5 @@ app().then(async r => {
         await sequelize.sync({force: false});
         await Commands(client, sequelize)
     })();
-
 })
 

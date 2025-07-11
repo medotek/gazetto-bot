@@ -12,11 +12,11 @@ export async function commandAutocomplete(interaction) {
         let filter = await gazetteDataProviderInstance.cachedSearchedKeyword(searchText, characters)
         // if the filter has less than 25 entries, then return (discord constraint)
         options = filter.slice(0, 24)
-        return await interaction.respond(options);
+        return interaction.respond(options);
     }
 
     // let filteredResults = randomlyFilter(characters)
-    return await interaction.respond(characters.map(character => {
+    return interaction.respond(characters.map(character => {
         return {
             name: character.name,
             value: character.id.toString()
