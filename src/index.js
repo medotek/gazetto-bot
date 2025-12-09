@@ -44,7 +44,7 @@ await genshinClient.cachedAssetsManager.activateAutoCacheUpdater({
         console.log("Updating Genshin  Data...");
     },
     onUpdateEnd: async () => {
-        starRailClient.cachedAssetsManager.refreshAllData(); // Refresh memory
+        genshinClient.cachedAssetsManager.refreshAllData(); // Refresh memory
         console.log("[GENSHIN] Updating Completed!");
     }
 })
