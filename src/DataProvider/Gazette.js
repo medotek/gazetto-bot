@@ -56,7 +56,7 @@ class GazetteDataProvider {
             cachedSearchKeyword[keyword] = filterArrayByPattern(data
                 .map(character => {
                     return {name: character.name, value: character.id.toString()}
-                }), keyword.split("\\s+").join("|"))
+                }), keyword.split(/\s+/).join("|"))
             // Cache the updated searchedKeyword
             Cache.set(cacheKey, cachedSearchKeyword)
         }

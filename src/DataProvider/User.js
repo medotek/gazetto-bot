@@ -106,7 +106,7 @@ export default class UserDataProvider {
             console.log(error)
             // Handle error response
             response = {
-                success: 'error',
+                status: 'error',
                 message: 'Une erreur est survenue sur la commande UID'
             }
         }
@@ -149,7 +149,7 @@ export default class UserDataProvider {
         } catch (error) {
             console.log(error)
             response = {
-                success: 'error',
+                status: 'error',
                 message: 'Une erreur est survenue sur la commande UID'
             }
         }

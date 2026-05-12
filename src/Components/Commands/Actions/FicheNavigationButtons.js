@@ -137,5 +137,5 @@ export async function ficheNavigationButtons(interaction) {
     }
 
     interactionUpdate.components = newComponents
-    interaction.update(interactionUpdate)
+    await interaction.update(interactionUpdate)
 }

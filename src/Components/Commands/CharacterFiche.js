@@ -176,7 +176,7 @@ export async function findCharacterFiche(interaction, result) {
             }
         }
 
-        if (weapons && weapons.length) {
+        if (artifacts && artifacts.length) {
             let selectComponent = artifactSetSelectComponent(artifacts)
             if (selectComponent) {
                 if (!response.hasOwnProperty('components'))

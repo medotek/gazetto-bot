@@ -11,7 +11,7 @@ export async function commandAutocomplete(interaction) {
         // return character name & value in an array
         let filter = await gazetteDataProviderInstance.cachedSearchedKeyword(searchText, characters)
         // if the filter has less than 25 entries, then return (discord constraint)
-        options = filter.slice(0, 24)
+        options = filter.slice(0, 25)
         return interaction.respond(options);
     }
 
