@@ -71,11 +71,16 @@ const app = async () =>  {
 
 app().then(async r => {
     if (r.status === 'success') {
-        // Load data in cache
-        await gazetteDataProviderInstance.charactersSheets()
+        // Warm both formatting variants in cache before going online so the
+        // first autocomplete / fiche never has to wait on the API.
+        await gazetteDataProviderInstance.charactersSheets(false)
+        await gazetteDataProviderInstance.charactersSheets(true)
+        // Keep them warm in the background (force refresh) so user interactions
+        // always hit memory and stay within Discord's 3s autocomplete deadline.
         setInterval(async () => {
-            await gazetteDataProviderInstance.charactersSheets()
-        }, 60*60*1000)
+            await gazetteDataProviderInstance.charactersSheets(false, true)
+            await gazetteDataProviderInstance.charactersSheets(true, true)
+        }, 30*60*1000)
 
         // Deploy commands
         await deployCommands()
