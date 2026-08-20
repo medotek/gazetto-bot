@@ -1,5 +1,5 @@
 import {InteractionType, TextInputStyle} from "discord-api-types/v10";
-import {userUidEmbedBuilder} from "../../Builder/Commands/EmbedBuilder.js";
+import {userUidCardBuilder, userUidEmbedBuilder} from "../../Builder/Commands/EmbedBuilder.js";
 import {ActionRowBuilder, MessageFlags, ModalBuilder, TextInputBuilder} from "discord.js";
 import UserDataProvider from "../../DataProvider/User.js";
 import {Game} from "../../Tools/index.js";
@@ -42,13 +42,25 @@ export async function Uid(sequelize, commandName, interaction) {
 
         // Build data for embedding in discord
         if (response && response.data) {
-            embed = await userUidEmbedBuilder(response.data, targetUser, game)
-            if (embed) {
-                replyObject.embeds = [embed];
+            // Genshin est servi en carte illustrée. Si le rendu échoue, on
+            // retombe sur l'embed classique plutôt que de ne rien afficher.
+            const card = game === Game.Genshin
+                ? await userUidCardBuilder(response.data, targetUser)
+                : null
+
+            if (card) {
+                replyObject.embeds = card.embeds
+                replyObject.files = card.files
                 delete(replyObject.content);
             } else {
-                ephemeralStatus = true
-                replyObject.content = 'Une erreur est survenue'
+                embed = await userUidEmbedBuilder(response.data, targetUser, game)
+                if (embed) {
+                    replyObject.embeds = [embed];
+                    delete(replyObject.content);
+                } else {
+                    ephemeralStatus = true
+                    replyObject.content = 'Une erreur est survenue'
+                }
             }
         }
 

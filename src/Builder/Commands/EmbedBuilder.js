@@ -1,8 +1,9 @@
-import {EmbedBuilder} from "discord.js";
+import {AttachmentBuilder, EmbedBuilder} from "discord.js";
 import {config} from 'dotenv'
 import {formattedRoles, roleFieldBuilder} from "../../Components/Utils/CommandHelper.js";
 import {Game} from "../../Tools/index.js";
 import gameDataProviderInstance from "../../DataProvider/Game.js";
+import {buildProfileCard, CARD_FILE} from "./ProfileCardBuilder.js";
 
 config({ quiet: true })
 
@@ -46,6 +47,41 @@ export const characterFicheEmbedBuilder = (characterFiche, iteration = null) => 
     }
 
     return embedBuilder
+}
+
+/**
+ * Réponse de /get-uid pour Genshin : la carte de profil en image, portée par un
+ * embed qui garde le lien Enka cliquable.
+ *
+ * Renvoie null si quoi que ce soit manque — l'appelant retombe alors sur
+ * l'embed classique, pour qu'un souci de rendu ne prive pas le joueur de ses
+ * informations.
+ *
+ * @param data ligne utilisateur (uid)
+ * @param user utilisateur Discord ciblé
+ * @returns {Promise<{embeds: EmbedBuilder[], files: AttachmentBuilder[]}|null>}
+ */
+export async function userUidCardBuilder(data, user) {
+    if (typeof data !== "object" || typeof user !== "object") return null
+
+    const enkaUser = await gameDataProviderInstance.genshinUser(data.uid)
+    if (!enkaUser) return null
+
+    const png = await buildProfileCard(enkaUser, data.uid)
+    if (!png) return null
+
+    // La carte reste une pièce jointe libre au lieu d'être posée dans l'embed :
+    // Discord l'affiche alors en pleine largeur, là où une image d'embed est
+    // réduite. L'embed ne porte plus que le titre et le lien Enka.
+    const embed = new EmbedBuilder()
+        .setColor(0xf2d77c)
+        .setTitle("Profil Genshin Impact de " + user.username)
+        .setURL(enkaUser.url)
+
+    return {
+        embeds: [embed],
+        files: [new AttachmentBuilder(png, {name: CARD_FILE})],
+    }
 }
 
 /***

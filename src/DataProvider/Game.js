@@ -16,6 +16,23 @@ class GameDataProvider {
         instance = this;
     }
 
+    /**
+     * Profil enka brut, pour ce qui a besoin de plus que les champs remontés
+     * par genshinData : la carte de profil lit la vitrine, les talents et les
+     * régions des personnages.
+     *
+     * @param uid
+     * @returns {Promise<object|null>}
+     */
+    async genshinUser(uid) {
+        try {
+            return await genshinClient.fetchUser(uid)
+        } catch (e) {
+            console.error(e)
+            return null
+        }
+    }
+
     async genshinData(uid) {
         try {
             let enkaUser = await genshinClient.fetchUser(uid)
