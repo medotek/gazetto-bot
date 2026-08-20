@@ -2,7 +2,7 @@ import {Cache} from "../Module/Cache.js";
 import {GuildCommandProvider} from "../DataProvider/GuildCommandProvider.js";
 import {config} from 'dotenv';
 
-config();
+config({ quiet: true });
 
 export function accentsTidy(s, formatted = false) {
     let r = s;

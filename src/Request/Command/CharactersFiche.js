@@ -1,7 +1,7 @@
 import {request} from 'undici'
 import {config} from 'dotenv'
 import {GudaToken} from "../../Module/GudaToken.js"
-config()
+config({ quiet: true })
 
 export async function getCharacters() {
     return await fetchResponse('character-fiche/get-characters')

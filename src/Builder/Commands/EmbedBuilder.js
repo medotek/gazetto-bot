@@ -4,7 +4,7 @@ import {formattedRoles, roleFieldBuilder} from "../../Components/Utils/CommandHe
 import {Game} from "../../Tools/index.js";
 import gameDataProviderInstance from "../../DataProvider/Game.js";
 
-config()
+config({ quiet: true })
 
 /**
  * @param characterFiche

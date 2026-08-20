@@ -1,7 +1,7 @@
 import {request} from 'undici'
 import {config} from 'dotenv'
 
-config()
+config({ quiet: true })
 
 /**
  * This class has to be defined on the overall app x bridge : Gu-dahsboard

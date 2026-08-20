@@ -1,8 +1,8 @@
 import {config} from  'dotenv'
 // Init dotenv config
-config()
+config({ quiet: true })
 // Import modules
-import {ActivityType, Client, GatewayIntentBits, Partials} from 'discord.js'
+import {ActivityType, Client, Events, GatewayIntentBits, Partials} from 'discord.js'
 const client = new Client({intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel]});
 // Import commands
 import {Commands} from './Components/commands.js'
@@ -87,11 +87,11 @@ app().then(async r => {
 
         await client.login(process.env.TOKEN);
 
-        client.on("ready", () => {
+        client.on(Events.ClientReady, () => {
             client.user.setActivity("/kibo", { type: ActivityType.Watching})
         })
 
-        client.once('ready', () => {
+        client.once(Events.ClientReady, () => {
             console.log('Kibo is ready')
         });
     } else {

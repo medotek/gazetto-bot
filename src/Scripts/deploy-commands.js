@@ -6,7 +6,7 @@ import {getCharacters, getRoles} from "../Request/Command/CharactersFiche.js";
 import {GetUidFromUserMenuContextCommand, HelpCommand} from "../Components/Commands/MiscellaneousCommands.js";
 import {GuildCommandProvider} from "../DataProvider/GuildCommandProvider.js";
 
-config();
+config({ quiet: true });
 
 export async function deployCommands() {
     const commands = [

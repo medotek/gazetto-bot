@@ -3,7 +3,7 @@ import {request} from "undici";
 import {starRailResourceUrl} from "../Tools/index.js";
 import {genshinClient} from "../index.js";
 
-config();
+config({ quiet: true });
 
 let instance;
 

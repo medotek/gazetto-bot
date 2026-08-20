@@ -3,7 +3,7 @@ import {accentsTidy} from "../Tools/index.js";
 import {Cache} from "../Module/Cache.js";
 import {getCharacters} from "../Request/Command/CharactersFiche.js";
 
-config();
+config({ quiet: true });
 
 let instance;
 

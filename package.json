@@ -1,19 +1,17 @@
 {
   "dependencies": {
     "@discordjs/builders": "^1.14.1",
-    "@discordjs/rest": "^2.6.1",
-    "canvas": "^2.11.2",
-    "discord-api-types": "^0.37.0",
-    "discord.js": "^14.26.4",
-    "dotenv": "^16.6.1",
+    "@discordjs/rest": "^2.6.3",
+    "discord-api-types": "^0.38.53",
+    "discord.js": "^14.27.0",
+    "dotenv": "^17.4.2",
     "enka-network-api": "^5.1.2",
-    "minisearch": "^5.1.0",
-    "mysql2": "^3.9.8",
+    "minisearch": "^7.2.0",
+    "mysql2": "^3.23.4",
     "node-cache": "^5.1.2",
     "sequelize": "^6.37.8",
-    "sqlite3": "^5.1.7",
-    "starrail.js": "^1.9.9",
-    "undici": "^6.25.0"
+    "starrail.js": "^1.9.10",
+    "undici": "^6.28.0"
   },
   "name": "gazetto-bot",
   "version": "1.0.0",

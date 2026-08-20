@@ -10,7 +10,7 @@ import gazetteDataProviderInstance from "../../DataProvider/Gazette.js";
 import {weaponsSelectComponent} from "../../DTO/Commands/Weapons.js";
 import {artifactSetSelectComponent} from "../../DTO/Commands/ArtifactSets.js";
 
-config()
+config({ quiet: true })
 
 export async function CharacterFiche(commandName, interaction) {
     if (commandName !== 'fiche') {
@@ -78,8 +78,9 @@ async function handleCharacterSearch(interaction) {
     })
 
     if (characters && typeof characters === 'object' && searchTerm.length > 2) {
-        // Add array for search index
-        miniSearch.addAll(characters)
+        // Add array for search index. MiniSearch throws on duplicate ids since
+        // v6, and the ids come from the API, so keep only the first of each.
+        miniSearch.addAll([...new Map(characters.map(c => [c.id, c])).values()])
 
         let formattedCharacterName = accentsTidy(searchTerm, true)
         if (formattedCharacterName.length > 2) {
