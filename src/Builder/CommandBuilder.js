@@ -1,6 +1,7 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {Cache} from "../Module/Cache.js";
 import {accentsTidy, Game} from "../Tools/index.js";
+import {themeChoices} from "./Commands/ProfileCardTheme.js";
 
 export const GetUidCommand = new SlashCommandBuilder()
     .setName('get-uid')
@@ -19,6 +20,12 @@ export const GetUidCommand = new SlashCommandBuilder()
                 {name: 'Genshin', value: Game.Genshin},
                 {name: 'Honkai Star Rail', value: Game.StarRail}
             )
+    )
+    .addStringOption(option =>
+        option.setName("theme")
+            .setDescription("Habillage de la carte Genshin (par défaut : d'après le premier personnage de la vitrine)")
+            .setRequired(false)
+            .addChoices(...themeChoices())
     );
 
 

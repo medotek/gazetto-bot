@@ -2,6 +2,7 @@ import {config} from 'dotenv';
 import {request} from "undici";
 import {starRailResourceUrl} from "../Tools/index.js";
 import {genshinClient} from "../index.js";
+import {Cache} from "../Module/Cache.js";
 
 config({ quiet: true });
 
@@ -25,8 +26,17 @@ class GameDataProvider {
      * @returns {Promise<object|null>}
      */
     async genshinUser(uid) {
+        // Court TTL : assez pour que changer d'habillage de carte reparte du
+        // profil déjà chargé au lieu de rappeler Enka, sans figer les données
+        // d'un joueur qui vient de modifier sa vitrine.
+        const cacheKey = `enka_user_${uid}`
+        const cached = await Cache.retrieve(cacheKey)
+        if (cached) return cached
+
         try {
-            return await genshinClient.fetchUser(uid)
+            const user = await genshinClient.fetchUser(uid)
+            if (user) Cache.set(cacheKey, user, 5 * 60)
+            return user
         } catch (e) {
             console.error(e)
             return null

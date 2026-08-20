@@ -39,6 +39,24 @@ export const THEMES = {
     },
 }
 
+/** Valeur de l'option quand le joueur laisse la vitrine décider. */
+export const AUTO_THEME = 'auto'
+
+/**
+ * Choix de l'option Discord, dérivés de THEMES pour qu'ajouter un thème ne
+ * demande pas de penser à mettre la commande à jour.
+ * @returns {{name: string, value: string}[]}
+ */
+export function themeChoices() {
+    return [
+        {name: 'Automatique (selon la vitrine)', value: AUTO_THEME},
+        ...Object.entries(THEMES).map(([key, t]) => ({
+            name: `${t.member} — ${t.region}`,
+            value: key,
+        })),
+    ]
+}
+
 /**
  * Région du personnage -> thème. `avatarAssocType` vit dans les données brutes
  * du jeu (details._data), l'API typée d'enka ne l'expose pas.

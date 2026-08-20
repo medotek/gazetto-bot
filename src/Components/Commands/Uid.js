@@ -45,12 +45,18 @@ export async function Uid(sequelize, commandName, interaction) {
             // Genshin est servi en carte illustrée. Si le rendu échoue, on
             // retombe sur l'embed classique plutôt que de ne rien afficher.
             const card = game === Game.Genshin
-                ? await userUidCardBuilder(response.data, targetUser)
+                ? await userUidCardBuilder(
+                    response.data,
+                    targetUser,
+                    interaction.options.getString('theme'),
+                    interaction.user.id,
+                )
                 : null
 
             if (card) {
                 replyObject.embeds = card.embeds
                 replyObject.files = card.files
+                replyObject.components = card.components
                 delete(replyObject.content);
             } else {
                 embed = await userUidEmbedBuilder(response.data, targetUser, game)

@@ -4,6 +4,8 @@ import {formattedRoles, roleFieldBuilder} from "../../Components/Utils/CommandHe
 import {Game} from "../../Tools/index.js";
 import gameDataProviderInstance from "../../DataProvider/Game.js";
 import {buildProfileCard, CARD_FILE} from "./ProfileCardBuilder.js";
+import {AUTO_THEME} from "./ProfileCardTheme.js";
+import {themeSelectComponent} from "../../DTO/Commands/Uid/ThemeSelect.js";
 
 config({ quiet: true })
 
@@ -57,17 +59,19 @@ export const characterFicheEmbedBuilder = (characterFiche, iteration = null) => 
  * l'embed classique, pour qu'un souci de rendu ne prive pas le joueur de ses
  * informations.
  *
- * @param data ligne utilisateur (uid)
- * @param user utilisateur Discord ciblé
- * @returns {Promise<{embeds: EmbedBuilder[], files: AttachmentBuilder[]}|null>}
+ * @param data     ligne utilisateur (uid)
+ * @param user     utilisateur Discord ciblé
+ * @param theme    clé de thème choisie, ou null/'auto' pour suivre la vitrine
+ * @param authorId auteur de la commande, seul autorisé à changer le thème
+ * @returns {Promise<{embeds: EmbedBuilder[], files: AttachmentBuilder[], components: ActionRowBuilder[]}|null>}
  */
-export async function userUidCardBuilder(data, user) {
+export async function userUidCardBuilder(data, user, theme = null, authorId = null) {
     if (typeof data !== "object" || typeof user !== "object") return null
 
     const enkaUser = await gameDataProviderInstance.genshinUser(data.uid)
     if (!enkaUser) return null
 
-    const png = await buildProfileCard(enkaUser, data.uid)
+    const png = await buildProfileCard(enkaUser, data.uid, theme)
     if (!png) return null
 
     // La carte reste une pièce jointe libre au lieu d'être posée dans l'embed :
@@ -81,6 +85,9 @@ export async function userUidCardBuilder(data, user) {
     return {
         embeds: [embed],
         files: [new AttachmentBuilder(png, {name: CARD_FILE})],
+        components: authorId
+            ? [themeSelectComponent(data.uid, authorId, theme ?? AUTO_THEME)]
+            : [],
     }
 }
 

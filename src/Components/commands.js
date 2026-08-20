@@ -10,6 +10,7 @@ import {selectCharacterFicheWeapons} from "./Commands/Actions/SelectCharacterFic
 import {selectCharacterFromWeaponFiche} from "./Commands/Actions/SelectCharacterFromWeaponFiche.js";
 import {Events} from "discord.js";
 import {selectCharacterFicheArtifactSets} from "./Commands/Actions/SelectCharacterFicheArtifactSets.js";
+import {selectProfileCardTheme} from "./Commands/Actions/SelectProfileCardTheme.js";
 
 export const Commands = (client, sequelize) => {
     client.on(Events.InteractionCreate, async interaction => {
@@ -51,6 +52,8 @@ export const Commands = (client, sequelize) => {
                 await selectCharacterFromWeaponFiche(interaction)
                 // weapon Fiche
                 await selectCharacterFicheArtifactSets(interaction)
+                // Get Uid card theme
+                await selectProfileCardTheme(interaction)
             }
 
             /***********************************/
