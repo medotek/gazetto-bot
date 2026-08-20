@@ -1,7 +1,7 @@
 import {Cache} from '../../Module/Cache.js'
 import {getCharacterFiche} from "../../Request/Command/CharactersFiche.js";
 import {characterFicheEmbedBuilder} from "../../Builder/Commands/EmbedBuilder.js";
-import {ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder} from "discord.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, StringSelectMenuBuilder} from "discord.js";
 import {navigationActionEmbedBuilder} from "../../Builder/Commands/NavigationActionEmbedBuilder.js";
 import MiniSearch from 'minisearch'
 import {config} from 'dotenv'
@@ -34,7 +34,7 @@ export async function CharacterFiche(commandName, interaction) {
     if (notAllowed || typeof channels !== 'object') {
         return await interaction.reply({
             content: "Vous n'êtes pas autorisé à utiliser la commande sur ce salon",
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
     }
 
@@ -60,7 +60,7 @@ export async function CharacterFiche(commandName, interaction) {
             delete (replyObj.content)
     }
 
-    replyObj.ephemeral = !!replyObj.content
+    replyObj.flags = replyObj.content ? MessageFlags.Ephemeral : undefined
     return await interaction.reply(replyObj)
 }
 

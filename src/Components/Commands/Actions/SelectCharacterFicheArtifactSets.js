@@ -1,6 +1,6 @@
 import {GudaToken} from "../../../Module/GudaToken.js";
 import {artifactFicheEmbed, weaponFicheEmbed} from "../../../Builder/Commands/EmbedBuilder.js";
-import {ActionRowBuilder, StringSelectMenuBuilder} from "discord.js";
+import {ActionRowBuilder, MessageFlags, StringSelectMenuBuilder} from "discord.js";
 import {rarityStar} from "../../../Tools/index.js";
 import {request} from "undici";
 
@@ -82,5 +82,5 @@ export async function selectCharacterFicheArtifactSets(interaction) {
         return interaction.reply(replyContent)
     }
 
-    return interaction.reply({content: "Une erreur est survenue", ephemeral: true})
+    return interaction.reply({content: "Une erreur est survenue", flags: MessageFlags.Ephemeral})
 }

@@ -2,7 +2,7 @@ import {EmbedBuilder} from "@discordjs/builders";
 import {getCharacters} from "../../Request/Command/CharactersFiche.js";
 import {Cache} from "../../Module/Cache.js";
 import {helpCharactersListEmbedBuilder} from "../../Builder/Commands/HelpCharactersListEmbedBuilder.js";
-import {ActionRowBuilder, StringSelectMenuBuilder} from "discord.js";
+import {ActionRowBuilder, MessageFlags, StringSelectMenuBuilder} from "discord.js";
 import {mentionSlashCommand} from "../../Tools/index.js";
 
 export async function helpCommand(interaction) {
@@ -46,7 +46,7 @@ export async function helpCommand(interaction) {
         }
 
         let replyObj = {
-            ephemeral: ephemeral
+            flags: ephemeral ? MessageFlags.Ephemeral : undefined
         }
 
         // TODO : refacto

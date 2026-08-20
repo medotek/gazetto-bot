@@ -1,4 +1,5 @@
 import UserDataProvider from "../../../DataProvider/User.js";
+import {MessageFlags} from "discord.js";
 
 export async function UidDTO(interaction, response) {
     // array : commandName_game
@@ -13,5 +14,5 @@ export async function UidDTO(interaction, response) {
         if (uid) response = await userData.setGameUid(uid, game)
     }
 
-    await interaction.reply({content: response.message ?? response.content, ephemeral: true})
+    await interaction.reply({content: response.message ?? response.content, flags: MessageFlags.Ephemeral})
 }

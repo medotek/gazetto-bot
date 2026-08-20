@@ -1,6 +1,6 @@
 import {InteractionType, TextInputStyle} from "discord-api-types/v10";
 import {userUidEmbedBuilder} from "../../Builder/Commands/EmbedBuilder.js";
-import {ActionRowBuilder, ModalBuilder, TextInputBuilder} from "discord.js";
+import {ActionRowBuilder, MessageFlags, ModalBuilder, TextInputBuilder} from "discord.js";
 import UserDataProvider from "../../DataProvider/User.js";
 import {Game} from "../../Tools/index.js";
 
@@ -28,7 +28,7 @@ export async function Uid(sequelize, commandName, interaction) {
             return;
 
         let ephemeralStatus = true;
-        let replyObject = {content: "Enregistre ton uid avec la commande /set-uid", ephemeral: true}
+        let replyObject = {content: "Enregistre ton uid avec la commande /set-uid", flags: MessageFlags.Ephemeral}
         let targetUser = interaction.options.getUser('user')
         let game = interaction.options.getString('game')
         let embed = null;
@@ -55,7 +55,7 @@ export async function Uid(sequelize, commandName, interaction) {
         if (response.status !== 'error' && replyObject.embeds)
             ephemeralStatus = false;
 
-        replyObject.ephemeral = ephemeralStatus
+        replyObject.flags = ephemeralStatus ? MessageFlags.Ephemeral : undefined
         await interaction.reply(replyObject)
     }
 }
@@ -69,7 +69,7 @@ export async function Uid(sequelize, commandName, interaction) {
  */
 export async function GetUidFromUserMenuContext(interaction) {
     let replyObj = {
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
     }
     let response, embed = null
     if (InteractionType.ApplicationCommand) {
@@ -122,7 +122,7 @@ async function allowChannels(interaction) {
     if (notAllowed || typeof channels !== 'object') {
         await interaction.reply({
             content: "Vous n'êtes pas autorisé à utiliser la commande sur ce salon",
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
 
         return true;
