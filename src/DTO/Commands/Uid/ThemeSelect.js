@@ -41,7 +41,7 @@ export function themeSelectComponent(uid, authorId, currentTheme = AUTO_THEME) {
                 default: currentTheme === AUTO_THEME,
             },
             ...Object.entries(THEMES).map(([key, theme]) => ({
-                label: theme.member,
+                label: theme.name,
                 description: theme.region,
                 value: key,
                 default: currentTheme === key,

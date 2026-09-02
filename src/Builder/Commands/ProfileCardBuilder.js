@@ -360,7 +360,7 @@ async function drawLeftColumn(ctx, data, palette, theme, box) {
     ctx.save()
     ctx.font = font('GzPoppins', 1.3 * U)
     ctx.fillStyle = palette.gold
-    ctx.fillText(THEMES[theme].member, infoX, by + 4 * U)
+    ctx.fillText(THEMES[theme].name, infoX, by + 4 * U)
     ctx.restore()
 }
 

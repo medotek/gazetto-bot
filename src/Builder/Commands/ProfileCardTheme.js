@@ -18,23 +18,23 @@
  */
 export const THEMES = {
     kibo: {
-        member: 'Kibo', region: 'Mondstadt', dark: false,
+        name: 'Classique', region: 'Mondstadt', dark: false,
         ink: '#16303a', surface: '#fefff0', accent: '#3597a6', gold: '#8f7024', veil: '#eef6f7',
     },
     fina: {
-        member: 'Fina', region: 'Inazuma', dark: false,
+        name: 'Narukami', region: 'Inazuma', dark: false,
         ink: '#1e2230', surface: '#ffffff', accent: '#a74d6a', gold: '#926d17', veil: '#f6eaed',
     },
     aste: {
-        member: 'Asté', region: 'Sumeru', dark: false,
+        name: 'Varanara', region: 'Sumeru', dark: false,
         ink: '#1e2230', surface: '#ffffff', accent: '#754087', gold: '#7c513f', veil: '#f1e9f3',
     },
     medo: {
-        member: 'Medo', region: 'Natlan', dark: true,
+        name: 'Sanctifeu', region: 'Natlan', dark: true,
         ink: '#f5f5f5', surface: '#1e1d2e', accent: '#fdddb7', gold: '#e9cc70', veil: null,
     },
     yung: {
-        member: 'Yung', region: 'Fontaine', dark: true,
+        name: 'Stormterror', region: 'Fontaine', dark: true,
         ink: '#f5f5f5', surface: '#242b3d', accent: '#d1fbee', gold: '#80bda9', veil: null,
     },
 }
@@ -51,7 +51,7 @@ export function themeChoices() {
     return [
         {name: 'Automatique (selon la vitrine)', value: AUTO_THEME},
         ...Object.entries(THEMES).map(([key, t]) => ({
-            name: `${t.member} — ${t.region}`,
+            name: t.name,
             value: key,
         })),
     ]
